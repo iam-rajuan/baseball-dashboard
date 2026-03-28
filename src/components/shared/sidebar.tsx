@@ -24,12 +24,12 @@ export const Sidebar = () => {
       />
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 flex h-screen w-[260px] flex-col rounded-r-[24px] border-r border-[#efe8da] bg-white px-6 py-6 shadow-panel transition lg:sticky lg:translate-x-0 lg:rounded-[22px] lg:border lg:px-7',
+          'fixed left-0 top-0 z-40 flex h-screen w-[258px] flex-col rounded-r-[24px] border-r border-[#efe8da] bg-white px-5 py-6 shadow-panel transition lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] lg:translate-x-0 lg:rounded-[28px] lg:border lg:px-6 lg:py-6',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        <div className="mb-12 flex items-start justify-between">
-          <AcademyLogo />
+        <div className="mb-10 flex items-start justify-between">
+          <AcademyLogo className="w-full justify-center" imageClassName="w-[118px]" />
           <button
             className="text-brand-navy lg:hidden"
             onClick={closeSidebar}
@@ -44,8 +44,8 @@ export const Sidebar = () => {
               key={to}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 rounded-xl px-4 py-3 text-[17px] font-medium text-brand-ink transition',
-                  isActive && 'bg-brand-orange text-white shadow-cta',
+                  'flex items-center gap-3 rounded-2xl px-4 py-3 text-[17px] font-medium text-brand-ink transition hover:bg-[#fff6ef]',
+                  isActive && 'bg-brand-orange text-white shadow-cta hover:bg-brand-orange',
                 )
               }
               onClick={closeSidebar}
@@ -57,7 +57,7 @@ export const Sidebar = () => {
           ))}
         </nav>
         <button
-          className="mt-auto flex items-center gap-3 px-4 py-3 text-[17px] font-medium text-[#f25b4f]"
+          className="mt-auto flex items-center gap-3 rounded-2xl px-4 py-3 text-[17px] font-medium text-[#f25b4f] transition hover:bg-[#fff4f3]"
           onClick={() => {
             logout()
             navigate('/auth/login')

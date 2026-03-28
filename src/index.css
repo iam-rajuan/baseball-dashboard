@@ -54,10 +54,14 @@
 @layer components {
   .app-shell {
     @apply min-h-screen bg-brand-cream text-brand-ink;
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.88), transparent 18%),
+      radial-gradient(circle at top right, rgba(235, 106, 8, 0.08), transparent 18%),
+      linear-gradient(180deg, #fdfaf2 0%, #fcf8ef 100%);
   }
 
   .dashboard-panel {
-    @apply rounded-[20px] border border-white/80 bg-white shadow-panel;
+    @apply rounded-[24px] border border-white/80 bg-white shadow-panel;
   }
 
   .section-kicker {

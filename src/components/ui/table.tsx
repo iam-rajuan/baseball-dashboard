@@ -19,8 +19,8 @@ export const Table = <T,>({
   rows,
   emptyMessage = 'No results found.',
 }: TableProps<T>) => (
-  <div className="overflow-hidden rounded-[18px] border border-[#ebe7e0] bg-white">
-    <div className="grid bg-brand-navy px-4 py-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-white sm:px-6">
+  <div className="overflow-hidden rounded-[24px] border border-[#ebe7e0] bg-white shadow-[0_10px_30px_rgba(17,31,90,0.04)]">
+    <div className="grid bg-brand-navy px-4 py-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white sm:px-6 xl:px-7">
       <div
         className="grid items-center gap-4"
         style={{
@@ -38,10 +38,10 @@ export const Table = <T,>({
       rows.map((row, index) => (
         <div
           key={index}
-          className="grid border-t border-[#f3efe8] px-4 py-5 text-sm text-brand-ink sm:px-6"
+          className="grid border-t border-[#f3efe8] px-4 py-5 text-sm text-brand-ink sm:px-6 xl:px-7"
         >
           <div
-            className="grid items-center gap-4"
+            className="grid items-center gap-4 xl:min-h-[48px]"
             style={{
               gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
             }}

@@ -49,13 +49,13 @@ export const DashboardOverviewPage = () => {
   })
 
   return (
-    <div className="space-y-8 px-1">
+    <div className="space-y-7 px-0.5 xl:space-y-8">
       <PageTitle
         description="Real-time performance metrics and operational analytics for the Southeast's premier developmental facility. Tracking growth since 2012."
         eyebrow="Dashboard Overview"
         title="Marietta Baseball Academy"
       />
-      <div className="grid gap-5 xl:grid-cols-3">
+      <div className="grid gap-4 xl:grid-cols-3 xl:gap-5">
         <StatsCard
           icon={FolderKanban}
           title="Drill Categories"
@@ -74,7 +74,7 @@ export const DashboardOverviewPage = () => {
           value={formatCurrency(data?.monthlyRevenue ?? 0)}
         />
       </div>
-      <section className="space-y-4">
+      <section className="space-y-3">
         <div className="section-kicker">Recent Activity</div>
         <Table columns={columns} rows={data?.recentActivity ?? []} />
       </section>

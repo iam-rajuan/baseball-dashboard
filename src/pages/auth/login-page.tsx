@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
@@ -18,6 +19,7 @@ type LoginValues = z.infer<typeof schema>
 export const LoginPage = () => {
   const navigate = useNavigate()
   const setSession = useAuthStore((state) => state.setSession)
+  const [showPassword, setShowPassword] = useState(false)
   const {
     register,
     handleSubmit,
@@ -57,8 +59,14 @@ export const LoginPage = () => {
         error={errors.password?.message}
         label="Password"
         labelClassName="text-white"
+        endAdornment={showPassword ? 'Hide' : 'Show'}
+        endAdornmentProps={{
+          'aria-label': showPassword ? 'Hide password' : 'Show password',
+          onClick: () => setShowPassword((current) => !current),
+          tabIndex: 0,
+        }}
         placeholder="****"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
         {...register('password')}
       />
       <div className="flex items-center justify-between text-sm text-white/70">

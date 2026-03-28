@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color: #182033;
+    background-color: #fcf8ef;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(235, 106, 8, 0.06),
+        transparent 24%
+      ),
+      linear-gradient(180deg, #fdfaf2 0%, #fcf8ef 100%);
+    color: #182033;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply min-h-screen bg-brand-cream text-brand-ink;
+  }
+
+  .dashboard-panel {
+    @apply rounded-[20px] border border-white/80 bg-white shadow-panel;
+  }
+
+  .section-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.28em] text-brand-orange;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

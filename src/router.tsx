@@ -15,6 +15,7 @@ import { EarningsPage } from '@/pages/dashboard/earnings-page'
 import { NotificationsPage } from '@/pages/dashboard/notifications-page'
 import { ProfilePage } from '@/pages/dashboard/profile-page'
 import { ReportsPage } from '@/pages/dashboard/reports-page'
+import { SituationsPage } from '@/pages/dashboard/situations-page'
 import { ChangePasswordPage } from '@/pages/settings/change-password-page'
 import { ContentEditorPage } from '@/pages/settings/content-editor-page'
 import { SettingsPage } from '@/pages/settings/settings-page'
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
       { path: 'drills/categories', element: <DrillCategoriesPage /> },
       { path: 'reports', element: <ReportsPage /> },
       { path: 'earnings', element: <EarningsPage /> },
+      { path: 'situations', element: <SituationsPage /> },
       { path: 'create-admin', element: <CreateAdminPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'settings', element: <SettingsPage /> },

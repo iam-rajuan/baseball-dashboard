@@ -20,6 +20,15 @@ export type Drill = {
   createdAt: string
 }
 
+export type Situation = {
+  id: string
+  title: string
+  image: string
+  displayOrder: number
+  featured: boolean
+  createdAt: string
+}
+
 export type Report = {
   id: string
   user: string

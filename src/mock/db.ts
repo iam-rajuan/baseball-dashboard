@@ -6,10 +6,13 @@ import type {
   NotificationItem,
   Report,
   SettingsContent,
+  Situation,
 } from '@/types/entities'
+import baseballGroundsDemoImage from '@/assets/baseball-grounds-demo.jpg'
 
 const placeholderCover =
   'https://placehold.co/800x600/f3efe7/111f5a?text=Upload'
+const situationDemoImage = baseballGroundsDemoImage
 const placeholderAvatar =
   'https://placehold.co/200x200/f2f4f8/111f5a?text=Admin'
 
@@ -98,6 +101,73 @@ const drills: Drill[] = [
     cover: placeholderCover,
     accessLevel: 'Premium',
     createdAt: '2024-10-19T09:05:00Z',
+  },
+]
+
+const situations: Situation[] = [
+  {
+    id: 'situation_1',
+    title: 'Infield Shift',
+    image: situationDemoImage,
+    displayOrder: 1,
+    featured: true,
+    createdAt: '2023-10-24T14:22:00Z',
+  },
+  {
+    id: 'situation_2',
+    title: 'Bunt Defense',
+    image: situationDemoImage,
+    displayOrder: 2,
+    featured: false,
+    createdAt: '2023-10-22T14:22:00Z',
+  },
+  {
+    id: 'situation_3',
+    title: 'Double Play Depth',
+    image: situationDemoImage,
+    displayOrder: 3,
+    featured: false,
+    createdAt: '2023-10-20T14:22:00Z',
+  },
+  {
+    id: 'situation_4',
+    title: 'Outfield Relay',
+    image: situationDemoImage,
+    displayOrder: 4,
+    featured: false,
+    createdAt: '2023-10-18T14:22:00Z',
+  },
+  {
+    id: 'situation_5',
+    title: 'Full Press Defense',
+    image: situationDemoImage,
+    displayOrder: 5,
+    featured: false,
+    createdAt: '2023-10-15T14:22:00Z',
+  },
+  {
+    id: 'situation_6',
+    title: 'Corners In',
+    image: situationDemoImage,
+    displayOrder: 6,
+    featured: false,
+    createdAt: '2023-10-12T14:22:00Z',
+  },
+  {
+    id: 'situation_7',
+    title: 'Tag Out Drill',
+    image: situationDemoImage,
+    displayOrder: 7,
+    featured: false,
+    createdAt: '2023-10-08T14:22:00Z',
+  },
+  {
+    id: 'situation_8',
+    title: 'Deep Fly Relay',
+    image: situationDemoImage,
+    displayOrder: 8,
+    featured: false,
+    createdAt: '2023-10-05T14:22:00Z',
   },
 ]
 
@@ -200,6 +270,7 @@ const settings: SettingsContent = {
 export const mockDb = {
   categories,
   drills,
+  situations,
   reports,
   earnings,
   notifications,

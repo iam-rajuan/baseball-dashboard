@@ -49,7 +49,7 @@ export const DashboardOverviewPage = () => {
   })
 
   return (
-    <div className="space-y-7 px-0.5 xl:space-y-8">
+    <div className="space-y-7 px-0.5 lg:px-1 xl:space-y-8 xl:px-1.5">
       <PageTitle
         description="Real-time performance metrics and operational analytics for the Southeast's premier developmental facility. Tracking growth since 2012."
         eyebrow="Dashboard Overview"

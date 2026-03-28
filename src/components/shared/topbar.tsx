@@ -6,7 +6,7 @@ export const Topbar = () => {
   const user = useAuthStore((state) => state.user)
 
   return (
-    <header className="dashboard-panel sticky top-3 z-20 flex items-center justify-between gap-4 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/88 sm:px-5 lg:top-4 xl:px-6 xl:py-3.5">
+    <header className="dashboard-panel sticky top-3 z-20 flex items-center justify-between gap-4 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/88 sm:px-4 lg:top-4 xl:px-5 xl:py-3.5">
       <div>
         <div className="text-[15px] font-bold text-brand-navy">
           Welcome,{user?.name ?? 'James'}

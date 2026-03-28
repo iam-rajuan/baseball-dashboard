@@ -65,7 +65,7 @@
   }
 
   .section-kicker {
-    @apply text-xs font-semibold uppercase tracking-[0.28em] text-brand-orange;
+    @apply pl-[2px] text-xs font-semibold uppercase tracking-[0.28em] text-brand-orange;
   }
 
   .scrollbar-hide {

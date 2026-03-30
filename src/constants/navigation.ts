@@ -2,6 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import {
   Banknote,
   BarChart3,
+  ChevronRight,
   FolderKanban,
   Settings,
   ShieldCheck,
@@ -10,14 +11,26 @@ import {
 
 export type SidebarLink = {
   label: string
-  to: string
   icon: LucideIcon
+  to?: string
+  children?: Array<{
+    label: string
+    to: string
+    icon?: LucideIcon
+  }>
 }
 
 export const sidebarLinks: SidebarLink[] = [
   { label: 'Dashboard', to: '/dashboard', icon: BarChart3 },
   { label: 'Earning', to: '/earnings', icon: Banknote },
-  { label: 'Drill Library', to: '/drills', icon: FolderKanban },
+  {
+    label: 'Drills',
+    icon: FolderKanban,
+    children: [
+      { label: 'Drill Category', to: '/drills/categories', icon: ChevronRight },
+      { label: 'Drill Library', to: '/drills', icon: ChevronRight },
+    ],
+  },
   { label: 'Situations', to: '/situations', icon: Spline },
   { label: 'Reports', to: '/reports', icon: ShieldCheck },
   { label: 'Create Admin', to: '/create-admin', icon: ShieldCheck },

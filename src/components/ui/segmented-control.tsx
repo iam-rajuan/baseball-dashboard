@@ -9,14 +9,18 @@ type SegmentedControlProps = {
   value: string
   onChange: (value: string) => void
   options: Option[]
+  className?: string
+  optionClassName?: string
 }
 
 export const SegmentedControl = ({
   value,
   onChange,
   options,
+  className,
+  optionClassName,
 }: SegmentedControlProps) => (
-  <div className="inline-flex rounded-xl bg-[#ece9e7] p-1">
+  <div className={cn('inline-flex rounded-xl bg-[#ece9e7] p-1', className)}>
     {options.map((option) => (
       <button
         key={option.value}
@@ -25,6 +29,7 @@ export const SegmentedControl = ({
           option.value === value
             ? 'bg-white text-brand-navy shadow-sm'
             : 'text-[#5b6171]',
+          optionClassName,
         )}
         onClick={() => onChange(option.value)}
         type="button"

@@ -8,6 +8,9 @@ type FileUploadProps = {
   value?: string
   onChange: (value: string) => void
   compact?: boolean
+  className?: string
+  helperClassName?: string
+  triggerText?: string
 }
 
 export const FileUpload = ({
@@ -16,6 +19,9 @@ export const FileUpload = ({
   value,
   onChange,
   compact = false,
+  className,
+  helperClassName,
+  triggerText = 'Click to upload or drag and drop',
 }: FileUploadProps) => {
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -52,6 +58,7 @@ export const FileUpload = ({
         className={cn(
           'relative flex w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#d6d8de] bg-[#f2efee] text-center transition hover:border-brand-orange',
           compact ? 'h-[88px]' : 'h-[118px]',
+          className,
         )}
         onClick={() => inputRef.current?.click()}
         type="button"
@@ -76,12 +83,14 @@ export const FileUpload = ({
               <UploadCloud className="mb-2 size-5 text-[#7c8293]" />
             )}
             <span className="text-sm font-medium text-brand-navy">
-              Click to upload or drag and drop
+              {triggerText}
             </span>
           </>
         )}
       </button>
-      <span className="mt-1 block text-xs text-[#98a0b1]">{helperText}</span>
+      <span className={cn('mt-1 block text-xs text-[#98a0b1]', helperClassName)}>
+        {helperText}
+      </span>
     </div>
   )
 }

@@ -27,7 +27,12 @@ export const ChangePasswordPage = () => {
   })
 
   const mutation = useMutation({
-    mutationFn: () => settingsService.changePassword(),
+    mutationFn: (values: z.infer<typeof schema>) =>
+      settingsService.changePassword(
+        values.currentPassword,
+        values.newPassword,
+        values.confirmPassword,
+      ),
   })
 
   return (
@@ -38,7 +43,7 @@ export const ChangePasswordPage = () => {
       <div className="dashboard-panel px-6 py-10">
         <form
           className="mx-auto max-w-[620px] space-y-5"
-          onSubmit={handleSubmit(() => mutation.mutate())}
+          onSubmit={handleSubmit((values) => mutation.mutate(values))}
         >
           <Input
             error={errors.currentPassword?.message}

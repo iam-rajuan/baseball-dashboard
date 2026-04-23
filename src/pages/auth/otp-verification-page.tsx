@@ -10,7 +10,7 @@ export const OtpVerificationPage = () => {
   const otpEmail = useAuthStore((state) => state.otpEmail)
   const [digits, setDigits] = useState(['8', '0', '8', '0'])
   const mutation = useMutation({
-    mutationFn: (otp: string) => authService.verifyOtp(otp),
+    mutationFn: (otp: string) => authService.verifyOtp(otpEmail, otp),
     onSuccess: () => navigate('/auth/reset-password'),
   })
 

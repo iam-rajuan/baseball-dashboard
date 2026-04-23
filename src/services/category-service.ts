@@ -1,45 +1,41 @@
-import { mockDb } from '@/mock/db'
-import { simulateNetwork } from '@/services/api'
+import { api, unwrap } from '@/services/api'
 import type { Category } from '@/types/entities'
-import { createId } from '@/utils/format'
 
 export type CategoryPayload = Omit<Category, 'id' | 'totalDrills'> & {
   id?: string
 }
 
-export const categoryService = {
-  getAll: async () => simulateNetwork([...mockDb.categories]),
-  save: async (payload: CategoryPayload) => {
-    const totalDrills = mockDb.drills.filter(
-      (drill) => drill.categoryId === payload.id,
-    ).length
-    if (payload.id) {
-      mockDb.categories = mockDb.categories.map((category) =>
-        category.id === payload.id
-          ? {
-              ...category,
-              ...payload,
-              totalDrills: category.totalDrills || totalDrills,
-            }
-          : category,
-      )
-    } else {
-      mockDb.categories = [
-        {
-          ...payload,
-          id: createId('category'),
-          totalDrills: 0,
-        },
-        ...mockDb.categories,
-      ]
-    }
+const normalizeAccessLevel = (value: string) =>
+  (value.charAt(0).toUpperCase() + value.slice(1)) as Category['accessLevel']
 
-    return simulateNetwork(true)
+const mapCategory = (item: Record<string, unknown>): Category => ({
+  id: String(item.id),
+  name: String(item.name),
+  subtitle: String(item.subtitle),
+  cover: String(item.cover),
+  icon: String(item.icon),
+  accessLevel: normalizeAccessLevel(String(item.accessLevel)),
+  totalDrills: Number(item.totalDrills),
+})
+
+export const categoryService = {
+  getAll: async (): Promise<Category[]> =>
+    unwrap(api.get('/drill-categories')).then((items) =>
+      (items as Record<string, unknown>[]).map(mapCategory),
+    ),
+  save: async (payload: CategoryPayload): Promise<Category> => {
+    const request = payload.id
+      ? api.patch(`/drill-categories/${payload.id}`, {
+          ...payload,
+          accessLevel: payload.accessLevel.toLowerCase(),
+        })
+      : api.post('/drill-categories', {
+          ...payload,
+          accessLevel: payload.accessLevel.toLowerCase(),
+        })
+
+    return unwrap(request)
   },
-  remove: async (id: string) => {
-    mockDb.categories = mockDb.categories.filter(
-      (category) => category.id !== id,
-    )
-    return simulateNetwork(true)
-  },
+  remove: async (id: string): Promise<void> =>
+    unwrap(api.delete(`/drill-categories/${id}`)),
 }

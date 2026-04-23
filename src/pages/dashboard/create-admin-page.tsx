@@ -89,6 +89,7 @@ export const CreateAdminPage = () => {
               <FileUpload
                 compact
                 helperText={errors.image?.message ?? 'Upload Image'}
+                folder="admins/avatars"
                 label="Profile Image"
                 onChange={field.onChange}
                 value={field.value}
@@ -104,7 +105,7 @@ export const CreateAdminPage = () => {
           </Button>
           {mutation.isSuccess ? (
             <div className="text-center text-sm text-green-600">
-              Mock admin created successfully.
+              Admin created successfully.
             </div>
           ) : null}
         </form>

@@ -1,42 +1,41 @@
-import { mockDb } from '@/mock/db'
-import { simulateNetwork } from '@/services/api'
+import { api, unwrap } from '@/services/api'
 import type { Drill } from '@/types/entities'
-import { createId } from '@/utils/format'
 
 export type DrillPayload = Omit<Drill, 'id' | 'createdAt'> & {
   id?: string
 }
 
+export type DrillRow = Drill & { categoryName: string }
+
+const normalizeAccessLevel = (value: string) =>
+  (value.charAt(0).toUpperCase() + value.slice(1)) as Drill['accessLevel']
+
 export const drillService = {
-  getAll: async () =>
-    simulateNetwork(
-      mockDb.drills.map((drill) => ({
-        ...drill,
-        categoryName:
-          mockDb.categories.find((category) => category.id === drill.categoryId)
-            ?.name ?? 'Unknown',
+  getAll: async (): Promise<DrillRow[]> =>
+    unwrap(api.get('/drills')).then((items) =>
+      (items as Record<string, unknown>[]).map((item) => ({
+        id: String(item.id),
+        name: String(item.name),
+        categoryId: String(item.categoryId),
+        description: String(item.description),
+        cover: String(item.cover),
+        accessLevel: normalizeAccessLevel(String(item.accessLevel)),
+        createdAt: String(item.createdAt),
+        categoryName: String(item.categoryName ?? ''),
       })),
     ),
-  save: async (payload: DrillPayload) => {
-    if (payload.id) {
-      mockDb.drills = mockDb.drills.map((drill) =>
-        drill.id === payload.id ? { ...drill, ...payload } : drill,
-      )
-    } else {
-      mockDb.drills = [
-        {
+  save: async (payload: DrillPayload): Promise<unknown> => {
+    const request = payload.id
+      ? api.patch(`/drills/${payload.id}`, {
           ...payload,
-          id: createId('drill'),
-          createdAt: new Date().toISOString(),
-        },
-        ...mockDb.drills,
-      ]
-    }
+          accessLevel: payload.accessLevel.toLowerCase(),
+        })
+      : api.post('/drills', {
+          ...payload,
+          accessLevel: payload.accessLevel.toLowerCase(),
+        })
 
-    return simulateNetwork(true)
+    return unwrap(request)
   },
-  remove: async (id: string) => {
-    mockDb.drills = mockDb.drills.filter((drill) => drill.id !== id)
-    return simulateNetwork(true)
-  },
+  remove: async (id: string): Promise<void> => unwrap(api.delete(`/drills/${id}`)),
 }

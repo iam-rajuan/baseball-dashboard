@@ -115,6 +115,7 @@ export const CategoryFormModal = ({
               helperText={errors.cover?.message ?? 'Recommended size: 800x600'}
               helperClassName="text-center text-[11px] text-[#9ba9c2]"
               label="Cover Photo"
+              folder="categories/covers"
               onChange={field.onChange}
               triggerText="Click to upload or drag and drop"
               value={field.value}
@@ -131,6 +132,7 @@ export const CategoryFormModal = ({
                 compact
                 helperClassName="hidden"
                 helperText={errors.icon?.message ?? 'Upload icon'}
+                folder="categories/icons"
                 label="Icon Selection"
                 onChange={field.onChange}
                 triggerText="Upload Icon"

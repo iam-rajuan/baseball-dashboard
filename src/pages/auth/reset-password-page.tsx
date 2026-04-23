@@ -6,10 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { authService } from '@/services/auth-service'
+import { useAuthStore } from '@/store/auth-store'
 
 const schema = z
   .object({
-    currentPassword: z.string().min(8, 'Current password is required'),
     newPassword: z.string().min(8, 'Minimum 8 characters'),
     confirmPassword: z.string().min(8, 'Confirm password'),
   })
@@ -20,6 +20,7 @@ const schema = z
 
 export const ResetPasswordPage = () => {
   const navigate = useNavigate()
+  const otpEmail = useAuthStore((state) => state.otpEmail)
   const {
     register,
     handleSubmit,
@@ -29,24 +30,21 @@ export const ResetPasswordPage = () => {
   })
 
   const mutation = useMutation({
-    mutationFn: () => authService.resetPassword(),
+    mutationFn: (values: z.infer<typeof schema>) =>
+      authService.resetPassword(
+        otpEmail,
+        values.newPassword,
+        values.confirmPassword,
+      ),
     onSuccess: () => navigate('/auth/login'),
   })
 
   return (
     <form
       className="mx-auto max-w-[490px] space-y-6 text-white"
-      onSubmit={handleSubmit(() => mutation.mutate())}
+      onSubmit={handleSubmit((values) => mutation.mutate(values))}
     >
       <h1 className="text-[30px] font-bold text-white">Set new password</h1>
-      <Input
-        className="h-14 rounded-xl border-0"
-        error={errors.currentPassword?.message}
-        label="Current Password"
-        labelClassName="text-white"
-        type="password"
-        {...register('currentPassword')}
-      />
       <Input
         className="h-14 rounded-xl border-0"
         error={errors.newPassword?.message}
@@ -63,6 +61,9 @@ export const ResetPasswordPage = () => {
         type="password"
         {...register('confirmPassword')}
       />
+      {mutation.error ? (
+        <div className="text-sm text-[#ffc7c2]">{mutation.error.message}</div>
+      ) : null}
       <Button className="h-14 rounded-xl" fullWidth size="lg" type="submit">
         Sign Up
       </Button>

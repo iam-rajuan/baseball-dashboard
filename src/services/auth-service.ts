@@ -1,30 +1,44 @@
-import { simulateNetwork } from '@/services/api'
+import { api, unwrap } from '@/services/api'
+import type { AdminUser } from '@/types/entities'
+
+type LoginResult = {
+  token: string
+  user: Pick<AdminUser, 'id' | 'name' | 'email' | 'role'>
+}
 
 export const authService = {
-  login: async (email: string, password: string) => {
-    const isValid =
-      email === 'admin@mariettabaseball.com' && password === 'password123'
-    if (!isValid) {
-      throw new Error('Use admin@mariettabaseball.com / password123')
-    }
-
-    return simulateNetwork({
-      token: 'mock-token',
-      user: {
-        id: 'admin_1',
-        name: 'James',
+  login: async (email: string, password: string): Promise<LoginResult> =>
+    unwrap(
+      api.post('/auth/admin/login', {
         email,
-        role: 'Super Admin',
-      },
-    })
-  },
-  forgotPassword: async (email: string) => simulateNetwork({ email }),
-  verifyOtp: async (otp: string) => {
-    if (otp !== '8080') {
-      throw new Error('Use OTP 8080')
-    }
-
-    return simulateNetwork(true)
-  },
-  resetPassword: async () => simulateNetwork(true),
+        password,
+      }),
+    ),
+  forgotPassword: async (
+    email: string,
+  ): Promise<{ email: string; maskedEmail: string; expiresInMinutes: number }> =>
+    unwrap(
+      api.post('/auth/admin/forgot-password', {
+        email,
+      }),
+    ),
+  verifyOtp: async (email: string, code: string): Promise<boolean> =>
+    unwrap(
+      api.post('/auth/admin/verify-otp', {
+        email,
+        code,
+      }),
+    ),
+  resetPassword: async (
+    email: string,
+    newPassword: string,
+    confirmPassword: string,
+  ): Promise<boolean> =>
+    unwrap(
+      api.post('/auth/admin/reset-password', {
+        email,
+        newPassword,
+        confirmPassword,
+      }),
+    ),
 }

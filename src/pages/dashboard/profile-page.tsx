@@ -27,7 +27,7 @@ export const ProfilePage = () => {
     if (data) {
       setProfile(data)
       reset({
-        name: 'userdemo',
+        name: data.name,
         email: data.email,
         contactNo: data.contactNo,
         image: data.image,
@@ -62,7 +62,7 @@ export const ProfilePage = () => {
               </button>
             </div>
             <div className="text-[28px] font-extrabold text-brand-navy">
-              Mr. Admin
+              {data?.name}
             </div>
             <button
               className="text-sm font-semibold text-brand-navy underline"

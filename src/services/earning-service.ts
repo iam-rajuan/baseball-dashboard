@@ -1,14 +1,18 @@
-import { mockDb } from '@/mock/db'
-import { simulateNetwork } from '@/services/api'
+import { api, unwrap } from '@/services/api'
+import type { Earning } from '@/types/entities'
+
+type EarningResponse = {
+  transactions: Earning[]
+  fullUnlockPrice: number
+}
 
 export const earningService = {
-  getAll: async () =>
-    simulateNetwork({
-      transactions: [...mockDb.earnings],
-      fullUnlockPrice: mockDb.fullUnlockPrice,
-    }),
-  updatePrice: async (price: number) => {
-    mockDb.fullUnlockPrice = price
-    return simulateNetwork(true)
-  },
+  getAll: async (): Promise<EarningResponse> =>
+    unwrap(api.get('/payments/transactions')),
+  updatePrice: async (price: number): Promise<void> =>
+    unwrap(
+      api.patch('/payments/price', {
+        price,
+      }),
+    ),
 }

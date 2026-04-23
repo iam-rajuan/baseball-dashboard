@@ -101,6 +101,7 @@ export const SituationFormModal = ({
               helperText={
                 errors.image?.message ?? 'Supports JPG, PNG (Max 5 MB)'
               }
+              folder="situations/images"
               label="Image Upload Area"
               onChange={field.onChange}
               value={field.value}

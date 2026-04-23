@@ -127,11 +127,13 @@ export const ReportsPage = () => {
       </div>
       <Table columns={columns} rows={rows} />
       <div className="flex flex-col gap-4 rounded-b-[18px] border border-t-0 border-[#ebe7e0] bg-white px-6 py-4 text-sm text-[#686f80] sm:flex-row sm:items-center sm:justify-between">
-        <div>Showing 1 to {rows.length} of 1,248 results</div>
+        <div>
+          Showing {rows.length} of {filtered.length} results
+        </div>
         <Pagination
           currentPage={page}
           onPageChange={setPage}
-          totalPages={Math.max(totalPages, 125)}
+          totalPages={totalPages}
         />
       </div>
       <ReportDetailsModal

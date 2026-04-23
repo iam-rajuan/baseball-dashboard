@@ -128,6 +128,7 @@ export const DrillFormModal = ({
               className="h-[98px] rounded-[16px] border-0 bg-[#efeced]"
               helperText={errors.cover?.message ?? 'Recommended size: 800x600'}
               helperClassName="text-center text-[11px] text-[#9ba9c2]"
+              folder="drills/covers"
               label="Cover Photo"
               onChange={field.onChange}
               triggerText="Click to upload or drag and drop"

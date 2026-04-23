@@ -1,6 +1,7 @@
 import { useId, useRef } from 'react'
 import { ImagePlus, UploadCloud } from 'lucide-react'
 import { cn } from '@/utils/cn'
+import { uploadService } from '@/services/upload-service'
 
 type FileUploadProps = {
   label?: string
@@ -11,6 +12,7 @@ type FileUploadProps = {
   className?: string
   helperClassName?: string
   triggerText?: string
+  folder?: string
 }
 
 export const FileUpload = ({
@@ -22,6 +24,7 @@ export const FileUpload = ({
   className,
   helperClassName,
   triggerText = 'Click to upload or drag and drop',
+  folder = 'general',
 }: FileUploadProps) => {
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -29,14 +32,8 @@ export const FileUpload = ({
 
   const handleFile = async (file?: File | null) => {
     if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        onChange(reader.result)
-      }
-    }
-    reader.readAsDataURL(file)
+    const fileUrl = await uploadService.uploadFile(file, folder)
+    onChange(fileUrl)
   }
 
   return (

@@ -17,10 +17,21 @@ type AuthState = {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  token: null,
-  user: null,
+  token: window.localStorage.getItem('mba-dashboard-token'),
+  user: (() => {
+    const raw = window.localStorage.getItem('mba-dashboard-user')
+    return raw ? (JSON.parse(raw) as AuthUser) : null
+  })(),
   otpEmail: 'contact@gmail.com',
-  setSession: (token, user) => set({ token, user }),
+  setSession: (token, user) => {
+    window.localStorage.setItem('mba-dashboard-token', token)
+    window.localStorage.setItem('mba-dashboard-user', JSON.stringify(user))
+    set({ token, user })
+  },
   setOtpEmail: (otpEmail) => set({ otpEmail }),
-  logout: () => set({ token: null, user: null }),
+  logout: () => {
+    window.localStorage.removeItem('mba-dashboard-token')
+    window.localStorage.removeItem('mba-dashboard-user')
+    set({ token: null, user: null })
+  },
 }))

@@ -28,7 +28,7 @@ export const LoginPage = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       email: 'admin@mariettabaseball.com',
-      password: 'password123',
+      password: 'admin@123',
     },
   })
 

@@ -32,8 +32,8 @@ export const CreateAdminPage = () => {
     defaultValues: {
       name: 'jhon doe',
       email: 'abc@gmail.com',
-      password: 'password123',
-      confirmPassword: 'password123',
+      password: 'admin@123',
+      confirmPassword: 'admin@123',
       image: '',
     },
   })

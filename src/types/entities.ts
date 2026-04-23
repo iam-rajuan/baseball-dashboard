@@ -77,3 +77,12 @@ export type DashboardOverview = {
   categoryCount: number
   recentActivity: Earning[]
 }
+
+export type UploadProviderStatus = {
+  provider: 'local' | 's3'
+  supportsPresignedUploads: boolean
+  activeMode: 'server' | 'presigned'
+  appBaseUrl: string
+  localUploadsBasePath: string | null
+  maxUploadFileSizeMb: number
+}

@@ -15,12 +15,19 @@ export type CategoryQuery = {
 const normalizeAccessLevel = (value: string) =>
   (value.charAt(0).toUpperCase() + value.slice(1)) as Category['accessLevel']
 
+const toStringValue = (value: unknown) => (typeof value === 'string' ? value : '')
+
 const mapCategory = (item: Record<string, unknown>): Category => ({
   id: String(item.id),
-  name: String(item.name),
-  subtitle: String(item.subtitle),
-  cover: String(item.cover),
-  icon: String(item.icon),
+  name: toStringValue(item.name),
+  subtitle: toStringValue(item.subtitle),
+  cover: toStringValue(item.cover || item.coverUrl || item.coverPhotoUrl),
+  coverUrl: toStringValue(item.coverUrl),
+  coverPhoto: toStringValue(item.coverPhoto),
+  coverPhotoUrl: toStringValue(item.coverPhotoUrl),
+  icon: toStringValue(item.icon || item.iconUrl),
+  iconUrl: toStringValue(item.iconUrl),
+  imageUrl: toStringValue(item.imageUrl),
   accessLevel: normalizeAccessLevel(String(item.accessLevel)),
   totalDrills: Number(item.totalDrills),
 })

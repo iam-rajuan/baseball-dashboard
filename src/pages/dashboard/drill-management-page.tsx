@@ -28,6 +28,7 @@ export const DrillManagementPage = () => {
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: categoryService.getAll,
+    placeholderData: (previousData) => previousData,
   })
 
   const accessLevel =
@@ -46,6 +47,7 @@ export const DrillManagementPage = () => {
         categoryId,
         accessLevel: accessLevel as 'all' | 'free' | 'locked',
       }),
+    placeholderData: (previousData) => previousData,
   })
 
   const saveMutation = useMutation({

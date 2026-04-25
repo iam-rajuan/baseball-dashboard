@@ -35,6 +35,7 @@ export const DrillCategoriesPage = () => {
         limit: pageSize,
         accessLevel: accessLevel as 'all' | 'free' | 'locked',
       }),
+    placeholderData: (previousData) => previousData,
   })
 
   const saveMutation = useMutation({

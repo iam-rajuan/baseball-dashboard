@@ -1,15 +1,18 @@
 import { Bell, UserCircle2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useAdminStore } from '@/store/admin-store'
 import { useAuthStore } from '@/store/auth-store'
 
 export const Topbar = () => {
   const user = useAuthStore((state) => state.user)
+  const profile = useAdminStore((state) => state.profile)
+  const displayName = profile?.name ?? user?.name
 
   return (
     <header className="dashboard-panel sticky top-3 z-20 flex items-center justify-between gap-4 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/88 sm:px-4 lg:top-4 xl:px-5 xl:py-3.5">
       <div>
         <div className="text-[15px] font-bold text-brand-navy">
-          Welcome,{user?.name ?? 'James'}
+          {displayName ? `Welcome,${displayName}` : 'Welcome'}
         </div>
         <div className="text-[13px] text-[#657084]">Have a nice day!</div>
       </div>

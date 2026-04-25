@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FileUpload } from '@/components/ui/file-upload'
 import { Input } from '@/components/ui/input'
+import { StableImage } from '@/components/ui/stable-image'
 import { adminService } from '@/services/admin-service'
 import { useAdminStore } from '@/store/admin-store'
 
@@ -16,18 +16,33 @@ type ProfileForm = {
 }
 
 export const ProfilePage = () => {
+  const queryClient = useQueryClient()
+  const cachedProfile = useAdminStore((state) => state.profile)
   const setProfile = useAdminStore((state) => state.setProfile)
-  const { register, handleSubmit, reset, setValue, watch } =
-    useForm<ProfileForm>()
+  const [isEditing, setIsEditing] = useState(false)
+  const { register, handleSubmit, reset, setValue, watch, setFocus } =
+    useForm<ProfileForm>({
+      defaultValues: {
+        name: cachedProfile?.name ?? '',
+        email: cachedProfile?.email ?? '',
+        contactNo: cachedProfile?.contactNo ?? '',
+        image: cachedProfile?.image ?? '',
+      },
+    })
   const image = watch('image')
+  const name = watch('name')
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['profile'],
     queryFn: adminService.getProfile,
+    initialData: cachedProfile ?? undefined,
   })
+  const currentProfile = data ?? cachedProfile
+  const currentImage = image || currentProfile?.image || ''
+  const currentName = name || currentProfile?.name || ''
 
   useEffect(() => {
-    if (data) {
+    if (data && !isEditing) {
       setProfile(data)
       reset({
         name: data.name,
@@ -36,11 +51,43 @@ export const ProfilePage = () => {
         image: data.image,
       })
     }
-  }, [data, reset, setProfile])
+  }, [data, isEditing, reset, setProfile])
 
   const mutation = useMutation({
     mutationFn: (values: ProfileForm) => adminService.updateProfile(values),
+    onSuccess: async (profile) => {
+      setProfile(profile)
+      queryClient.setQueryData(['profile'], profile)
+      reset({
+        name: profile.name,
+        email: profile.email,
+        contactNo: profile.contactNo,
+        image: profile.image,
+      })
+      setIsEditing(false)
+      await queryClient.invalidateQueries({ queryKey: ['profile'] })
+    },
   })
+
+  const toggleEditing = () => {
+    mutation.reset()
+
+    if (isEditing) {
+      if (data) {
+        reset({
+          name: data.name,
+          email: data.email,
+          contactNo: data.contactNo,
+          image: data.image,
+        })
+      }
+      setIsEditing(false)
+      return
+    }
+
+    setIsEditing(true)
+    window.setTimeout(() => setFocus('name'), 0)
+  }
 
   return (
     <div className="space-y-6 px-1">
@@ -51,27 +98,25 @@ export const ProfilePage = () => {
           onSubmit={handleSubmit((values) => mutation.mutate(values))}
         >
           <div className="flex flex-col items-center gap-4 pt-6">
-            <div className="relative">
-              <img
-                alt="Admin"
-                className="size-24 rounded-full border-2 border-white object-cover shadow-panel"
-                src={image || data?.image}
-              />
-              <button
-                className="absolute bottom-1 right-0 flex size-7 items-center justify-center rounded-full bg-[#e9e9ec] text-[#6b7182]"
-                type="button"
-              >
-                <Pencil className="size-3" />
-              </button>
-            </div>
+            <StableImage
+              alt="Admin"
+              className="size-24 rounded-full border-2 border-white shadow-panel"
+              fallback={
+                isLoading ? (
+                  <span className="block size-full animate-pulse rounded-full bg-[#ece9e7]" />
+                ) : null
+              }
+              src={currentImage}
+            />
             <div className="text-[28px] font-extrabold text-brand-navy">
-              {data?.name}
+              {currentName || (isLoading ? 'Loading...' : '')}
             </div>
             <button
               className="text-sm font-semibold text-brand-navy underline"
+              onClick={toggleEditing}
               type="button"
             >
-              Edit Profile
+              {isEditing ? 'Discard Changes' : 'Edit Profile'}
             </button>
           </div>
           <FileUpload
@@ -79,19 +124,43 @@ export const ProfilePage = () => {
             folder="profiles"
             helperText="Supports JPG, PNG (Max 5 MB)"
             label="Profile Photo"
+            disabled={!isEditing || mutation.isPending}
             onChange={(value) => setValue('image', value)}
-            value={image}
+            value={currentImage}
           />
-          <Input label="User Name" {...register('name')} />
-          <Input label="Email" {...register('email')} />
-          <Input label="Contact No" {...register('contactNo')} />
+          <Input
+            disabled={!isEditing || mutation.isPending}
+            label="User Name"
+            {...register('name')}
+          />
+          <Input
+            disabled={!isEditing || mutation.isPending}
+            label="Email"
+            {...register('email')}
+          />
+          <Input
+            disabled={!isEditing || mutation.isPending}
+            label="Contact No"
+            {...register('contactNo')}
+          />
           <Button
             className="mx-auto flex w-full max-w-[430px]"
+            disabled={!isEditing || mutation.isPending}
             fullWidth
             variant="navy"
           >
-            Update Profile
+            {mutation.isPending ? 'Updating...' : 'Update Profile'}
           </Button>
+          {mutation.isSuccess ? (
+            <div className="text-center text-sm text-green-600">
+              Profile updated successfully.
+            </div>
+          ) : null}
+          {mutation.error ? (
+            <div className="text-center text-sm text-red-500">
+              {mutation.error.message}
+            </div>
+          ) : null}
         </form>
       </div>
     </div>

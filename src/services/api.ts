@@ -1,8 +1,10 @@
 import axios from 'axios'
 
+import { env } from '@/config/env'
+import { useAuthStore } from '@/store/auth-store'
+
 export const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000/api/v1',
+  baseURL: env.apiBaseUrl,
 })
 
 api.interceptors.request.use((config) => {
@@ -18,6 +20,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      useAuthStore.getState().logout()
+    }
+
     const message =
       error.response?.data?.message || error.message || 'Request failed'
 
@@ -58,8 +64,7 @@ export const unwrapPaginated = async <T>(
   const response = await request
   return {
     items: response.data.data,
-    pagination:
-      response.data.pagination ??
+    pagination: response.data.pagination ??
       response.data.meta?.pagination ?? {
         page: 1,
         limit: response.data.data.length,

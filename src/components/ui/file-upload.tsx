@@ -1,5 +1,6 @@
 import { useId, useRef, useState } from 'react'
 import { ImagePlus, UploadCloud } from 'lucide-react'
+import { StableImage } from '@/components/ui/stable-image'
 import { cn } from '@/utils/cn'
 import { uploadService } from '@/services/upload-service'
 
@@ -8,6 +9,7 @@ type FileUploadProps = {
   helperText?: string
   value?: string
   onChange: (value: string) => void
+  disabled?: boolean
   compact?: boolean
   className?: string
   helperClassName?: string
@@ -20,6 +22,7 @@ export const FileUpload = ({
   helperText = 'Recommended size: 800x600',
   value,
   onChange,
+  disabled = false,
   compact = false,
   className,
   helperClassName,
@@ -34,7 +37,7 @@ export const FileUpload = ({
   const hasPreview = Boolean(value)
 
   const handleFile = async (file?: File | null) => {
-    if (!file) return
+    if (!file || disabled || isUploading) return
     try {
       setError(null)
       setIsUploading(true)
@@ -63,6 +66,7 @@ export const FileUpload = ({
         className="hidden"
         id={inputId}
         onChange={(event) => handleFile(event.target.files?.[0])}
+        disabled={disabled || isUploading}
         type="file"
       />
       <button
@@ -70,8 +74,10 @@ export const FileUpload = ({
           'relative flex w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#d6d8de] bg-[#f2efee] text-center transition hover:border-brand-orange',
           compact ? 'h-[88px]' : 'h-[118px]',
           isDragging && 'border-brand-orange bg-[#fff6ef]',
+          disabled && 'cursor-not-allowed opacity-70 hover:border-[#d6d8de]',
           className,
         )}
+        disabled={disabled || isUploading}
         onClick={() => inputRef.current?.click()}
         onDragEnter={(event) => {
           event.preventDefault()
@@ -91,9 +97,9 @@ export const FileUpload = ({
       >
         {hasPreview ? (
           <>
-            <img
+            <StableImage
               alt="Upload preview"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full"
               src={value}
             />
             <span className="absolute inset-0 bg-brand-navy/18" />

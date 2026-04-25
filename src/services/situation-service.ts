@@ -5,13 +5,16 @@ export type SituationPayload = Omit<Situation, 'id' | 'createdAt'> & {
   id?: string
 }
 
+const toStringValue = (value: unknown) => (typeof value === 'string' ? value : '')
+
 const mapSituation = (item: Record<string, unknown>): Situation => ({
   id: String(item.id),
-  title: String(item.title),
-  image: String(item.image),
+  title: toStringValue(item.title),
+  image: toStringValue(item.image || item.imageUrl),
+  imageUrl: toStringValue(item.imageUrl),
   displayOrder: Number(item.displayOrder),
   featured: Boolean(item.featured),
-  createdAt: String(item.createdAt),
+  createdAt: toStringValue(item.createdAt),
 })
 
 export const situationService = {

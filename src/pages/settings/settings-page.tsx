@@ -56,9 +56,9 @@ export const SettingsPage = () => {
                 Public Asset Base
               </div>
               <div className="mt-1 break-all text-sm font-medium text-brand-ink">
-                {uploadProvider.localUploadsBasePath
-                  ? `${uploadProvider.appBaseUrl}${uploadProvider.localUploadsBasePath}`
-                  : uploadProvider.appBaseUrl}
+                {uploadProvider.localFileBaseUrl ??
+                  uploadProvider.appBaseUrl ??
+                  'Not configured'}
               </div>
             </div>
           </div>

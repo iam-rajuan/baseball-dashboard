@@ -43,7 +43,7 @@ const columns: Column<Earning>[] = [
 ]
 
 export const DashboardOverviewPage = () => {
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['dashboard-overview'],
     queryFn: dashboardService.getOverview,
   })
@@ -58,25 +58,32 @@ export const DashboardOverviewPage = () => {
       <div className="grid gap-4 xl:grid-cols-3 xl:gap-5">
         <StatsCard
           icon={FolderKanban}
+          loading={isLoading}
           title="Drill Categories"
-          value={formatNumber(data?.categoryCount ?? 0)}
+          value={data ? formatNumber(data.categoryCount) : ''}
         />
         <StatsCard
           accent="Live •"
           icon={ShoppingCart}
+          loading={isLoading}
           title="Total Purchases"
-          value={formatNumber(data?.totalPurchases ?? 0)}
+          value={data ? formatNumber(data.totalPurchases) : ''}
         />
         <StatsCard
           dark
           icon={Banknote}
+          loading={isLoading}
           title="Monthly Revenue"
-          value={formatCurrency(data?.monthlyRevenue ?? 0)}
+          value={data ? formatCurrency(data.monthlyRevenue) : ''}
         />
       </div>
       <section className="space-y-3">
         <div className="section-kicker">Recent Activity</div>
-        <Table columns={columns} rows={data?.recentActivity ?? []} />
+        {isLoading ? (
+          <div className="dashboard-panel h-[236px]" />
+        ) : (
+          <Table columns={columns} rows={data?.recentActivity ?? []} />
+        )}
       </section>
     </div>
   )

@@ -5,7 +5,12 @@ export type Category = {
   name: string
   subtitle: string
   cover: string
+  coverUrl?: string
+  coverPhoto?: string
+  coverPhotoUrl?: string
   icon: string
+  iconUrl?: string
+  imageUrl?: string
   accessLevel: AccessLevel
   totalDrills: number
 }
@@ -16,6 +21,10 @@ export type Drill = {
   categoryId: string
   description: string
   cover: string
+  coverUrl?: string
+  coverPhoto?: string
+  coverPhotoUrl?: string
+  imageUrl?: string
   accessLevel: AccessLevel
   createdAt: string
 }
@@ -24,6 +33,7 @@ export type Situation = {
   id: string
   title: string
   image: string
+  imageUrl?: string
   displayOrder: number
   featured: boolean
   createdAt: string
@@ -85,7 +95,8 @@ export type UploadProviderStatus = {
   provider: 'local' | 's3'
   supportsPresignedUploads: boolean
   activeMode: 'server' | 'presigned'
-  appBaseUrl: string
+  appBaseUrl: string | null
   localUploadsBasePath: string | null
+  localFileBaseUrl: string | null
   maxUploadFileSizeMb: number
 }

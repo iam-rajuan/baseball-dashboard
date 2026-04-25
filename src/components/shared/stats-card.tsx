@@ -8,6 +8,7 @@ type StatsCardProps = {
   icon: LucideIcon
   dark?: boolean
   accent?: string
+  loading?: boolean
 }
 
 export const StatsCard = ({
@@ -16,6 +17,7 @@ export const StatsCard = ({
   icon: Icon,
   dark = false,
   accent,
+  loading = false,
 }: StatsCardProps) => (
   <Card
     className={cn(
@@ -50,7 +52,16 @@ export const StatsCard = ({
         dark ? 'text-white' : 'text-brand-ink',
       )}
     >
-      {value}
+      {loading ? (
+        <span
+          className={cn(
+            'block h-8 w-24 rounded-lg',
+            dark ? 'bg-white/18' : 'bg-[#e8e2d7]',
+          )}
+        />
+      ) : (
+        value
+      )}
     </div>
   </Card>
 )

@@ -4,6 +4,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { SituationFormModal } from '@/features/situations/situation-form-modal'
 import { Button } from '@/components/ui/button'
 import { Pagination } from '@/components/ui/pagination'
+import { StableImage } from '@/components/ui/stable-image'
 import { situationService } from '@/services/situation-service'
 import type { Situation } from '@/types/entities'
 import { formatDate } from '@/utils/format'
@@ -19,6 +20,7 @@ export const SituationsPage = () => {
   const { data } = useQuery({
     queryKey: ['situations', page],
     queryFn: () => situationService.getPage({ page, limit: pageSize }),
+    placeholderData: (previousData) => previousData,
   })
 
   const saveMutation = useMutation({
@@ -101,9 +103,11 @@ const SituationCard = ({
   sequence: number
 }) => (
   <article className="dashboard-panel overflow-hidden p-4">
-    <div
-      className="h-[168px] rounded-[20px] bg-cover bg-center"
-      style={{ backgroundImage: `url(${item.image})` }}
+    <StableImage
+      alt={item.title}
+      className="h-[168px] rounded-[20px]"
+      fallback={<span className="block h-full w-full animate-pulse bg-[#ece9e7]" />}
+      src={item.image}
     />
     <div className="mt-4 space-y-1">
       <div className="flex items-start justify-between gap-3">

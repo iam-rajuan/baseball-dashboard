@@ -17,15 +17,21 @@ export type DrillQuery = {
 const normalizeAccessLevel = (value: string) =>
   (value.charAt(0).toUpperCase() + value.slice(1)) as Drill['accessLevel']
 
+const toStringValue = (value: unknown) => (typeof value === 'string' ? value : '')
+
 const mapDrill = (item: Record<string, unknown>): DrillRow => ({
   id: String(item.id),
-  name: String(item.name),
-  categoryId: String(item.categoryId),
-  description: String(item.description),
-  cover: String(item.cover),
+  name: toStringValue(item.name),
+  categoryId: toStringValue(item.categoryId),
+  description: toStringValue(item.description),
+  cover: toStringValue(item.cover || item.coverUrl || item.coverPhotoUrl),
+  coverUrl: toStringValue(item.coverUrl),
+  coverPhoto: toStringValue(item.coverPhoto),
+  coverPhotoUrl: toStringValue(item.coverPhotoUrl),
+  imageUrl: toStringValue(item.imageUrl),
   accessLevel: normalizeAccessLevel(String(item.accessLevel)),
-  createdAt: String(item.createdAt),
-  categoryName: String(item.categoryName ?? ''),
+  createdAt: toStringValue(item.createdAt),
+  categoryName: toStringValue(item.categoryName),
 })
 
 export const drillService = {

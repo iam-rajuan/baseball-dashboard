@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -20,9 +20,21 @@ export const DrillCategoriesPage = () => {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
 
+  const accessLevel =
+    filter === 'All'
+      ? 'all'
+      : filter === 'Locked'
+        ? 'locked'
+        : filter.toLowerCase()
+
   const { data } = useQuery({
-    queryKey: ['categories'],
-    queryFn: categoryService.getAll,
+    queryKey: ['categories', page, accessLevel],
+    queryFn: () =>
+      categoryService.getPage({
+        page,
+        limit: pageSize,
+        accessLevel: accessLevel as 'all' | 'free' | 'locked',
+      }),
   })
 
   const saveMutation = useMutation({
@@ -43,17 +55,9 @@ export const DrillCategoriesPage = () => {
     },
   })
 
-  const filtered = useMemo(() => {
-    const normalized = data ?? []
-    if (filter === 'All') return normalized
-    if (filter === 'Locked') {
-      return normalized.filter((item) => item.accessLevel === 'Premium')
-    }
-    return normalized.filter((item) => item.accessLevel === filter)
-  }, [data, filter])
-
-  const rows = filtered.slice((page - 1) * pageSize, page * pageSize)
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
+  const rows = data?.items ?? []
+  const totalPages = data?.pagination.totalPages ?? 1
+  const total = data?.pagination.total ?? 0
 
   const columns: Column<Category>[] = [
     {
@@ -132,7 +136,10 @@ export const DrillCategoriesPage = () => {
                   ? 'rounded-lg bg-white px-5 py-2 text-sm font-semibold text-brand-ink'
                   : 'px-5 py-2 text-sm font-medium text-[#6c7180]'
               }
-              onClick={() => setFilter(item)}
+            onClick={() => {
+              setFilter(item)
+              setPage(1)
+            }}
               type="button"
             >
               {item}
@@ -143,7 +150,7 @@ export const DrillCategoriesPage = () => {
       <Table columns={columns} rows={rows} />
       <div className="flex flex-col gap-4 rounded-b-[18px] bg-[#f7f4ef] px-6 py-4 text-sm text-[#686f80] sm:flex-row sm:items-center sm:justify-between">
         <div>
-          Showing {rows.length} of {filtered.length} categories
+          Showing {rows.length} of {total} categories
         </div>
         <Pagination
           currentPage={page}

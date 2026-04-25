@@ -27,8 +27,8 @@ export const LoginPage = () => {
   } = useForm<LoginValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: 'admin@mariettabaseball.com',
-      password: 'admin@123',
+      email: '',
+      password: '',
     },
   })
 

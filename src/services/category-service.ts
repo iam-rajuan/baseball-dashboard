@@ -1,8 +1,15 @@
-import { api, unwrap } from '@/services/api'
+import { api, unwrap, unwrapPaginated } from '@/services/api'
 import type { Category } from '@/types/entities'
 
 export type CategoryPayload = Omit<Category, 'id' | 'totalDrills'> & {
   id?: string
+}
+
+export type CategoryQuery = {
+  page?: number
+  limit?: number
+  accessLevel?: 'all' | 'free' | 'premium' | 'locked'
+  search?: string
 }
 
 const normalizeAccessLevel = (value: string) =>
@@ -23,6 +30,13 @@ export const categoryService = {
     unwrap(api.get('/drill-categories')).then((items) =>
       (items as Record<string, unknown>[]).map(mapCategory),
     ),
+  getPage: async (query: CategoryQuery) =>
+    unwrapPaginated<Record<string, unknown>>(
+      api.get('/drill-categories', { params: query }),
+    ).then((result) => ({
+      items: result.items.map(mapCategory),
+      pagination: result.pagination,
+    })),
   save: async (payload: CategoryPayload): Promise<Category> => {
     const request = payload.id
       ? api.patch(`/drill-categories/${payload.id}`, {

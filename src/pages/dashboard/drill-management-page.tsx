@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -30,9 +30,22 @@ export const DrillManagementPage = () => {
     queryFn: categoryService.getAll,
   })
 
-  const { data = [] } = useQuery({
-    queryKey: ['drills'],
-    queryFn: drillService.getAll,
+  const accessLevel =
+    status === 'All'
+      ? 'all'
+      : status === 'Locked'
+        ? 'locked'
+        : status.toLowerCase()
+
+  const { data: drillPage } = useQuery({
+    queryKey: ['drills', page, categoryId, accessLevel],
+    queryFn: () =>
+      drillService.getPage({
+        page,
+        limit: pageSize,
+        categoryId,
+        accessLevel: accessLevel as 'all' | 'free' | 'locked',
+      }),
   })
 
   const saveMutation = useMutation({
@@ -55,22 +68,9 @@ export const DrillManagementPage = () => {
     },
   })
 
-  const filtered = useMemo(() => {
-    return data.filter((item) => {
-      const categoryMatch =
-        categoryId === 'all' || item.categoryId === categoryId
-      const statusMatch =
-        status === 'All' ||
-        (status === 'Locked'
-          ? item.accessLevel === 'Premium'
-          : item.accessLevel === status)
-
-      return categoryMatch && statusMatch
-    })
-  }, [categoryId, data, status])
-
-  const rows = filtered.slice((page - 1) * pageSize, page * pageSize)
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
+  const rows = drillPage?.items ?? []
+  const totalPages = drillPage?.pagination.totalPages ?? 1
+  const total = drillPage?.pagination.total ?? 0
 
   const columns: Column<DrillRow>[] = [
     {
@@ -137,7 +137,10 @@ export const DrillManagementPage = () => {
       <div className="grid gap-4 rounded-[20px] bg-white p-4 shadow-panel md:grid-cols-2">
         <Select
           value={categoryId}
-          onChange={(event) => setCategoryId(event.target.value)}
+          onChange={(event) => {
+            setCategoryId(event.target.value)
+            setPage(1)
+          }}
         >
           <option value="all">All Categories</option>
           {categories.map((category) => (
@@ -148,9 +151,10 @@ export const DrillManagementPage = () => {
         </Select>
         <Select
           value={status}
-          onChange={(event) =>
+          onChange={(event) => {
             setStatus(event.target.value as 'All' | 'Free' | 'Locked')
-          }
+            setPage(1)
+          }}
         >
           <option value="All">All</option>
           <option value="Free">Free</option>
@@ -160,7 +164,7 @@ export const DrillManagementPage = () => {
       <Table columns={columns} rows={rows} />
       <div className="flex flex-col gap-4 rounded-b-[18px] bg-[#f7f4ef] px-6 py-4 text-sm text-[#686f80] sm:flex-row sm:items-center sm:justify-between">
         <div>
-          Showing {rows.length} of {filtered.length} drills
+          Showing {rows.length} of {total} drills
         </div>
         <Pagination
           currentPage={page}

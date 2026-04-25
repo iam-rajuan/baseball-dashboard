@@ -1,16 +1,19 @@
 import { Modal } from '@/components/ui/modal'
+import { Button } from '@/components/ui/button'
 import type { Report } from '@/types/entities'
 
 type ReportDetailsModalProps = {
   open: boolean
   onClose: () => void
   report: Report | null
+  onStatusChange?: (status: 'open' | 'resolved') => void
 }
 
 export const ReportDetailsModal = ({
   open,
   onClose,
   report,
+  onStatusChange,
 }: ReportDetailsModalProps) => (
   <Modal
     className="max-w-[560px]"
@@ -49,6 +52,18 @@ export const ReportDetailsModal = ({
           <p className="rounded-2xl bg-[#f7f4ef] p-4 leading-7">
             {report.message}
           </p>
+        </div>
+        <div className="flex gap-3">
+          <Button
+            onClick={() =>
+              onStatusChange?.(
+                report.status === 'Resolved' ? 'open' : 'resolved',
+              )
+            }
+            type="button"
+          >
+            {report.status === 'Resolved' ? 'Reopen Report' : 'Mark Resolved'}
+          </Button>
         </div>
       </div>
     ) : null}

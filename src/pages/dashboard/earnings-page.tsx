@@ -15,8 +15,8 @@ export const EarningsPage = () => {
   const [page, setPage] = useState(1)
   const [open, setOpen] = useState(false)
   const { data } = useQuery({
-    queryKey: ['earnings'],
-    queryFn: earningService.getAll,
+    queryKey: ['earnings', page],
+    queryFn: () => earningService.getPage({ page, limit: pageSize }),
   })
 
   const updateMutation = useMutation({
@@ -27,14 +27,9 @@ export const EarningsPage = () => {
     },
   })
 
-  const rows = (data?.transactions ?? []).slice(
-    (page - 1) * pageSize,
-    page * pageSize,
-  )
-  const totalPages = Math.max(
-    1,
-    Math.ceil((data?.transactions.length ?? 0) / pageSize),
-  )
+  const rows = data?.transactions ?? []
+  const totalPages = data?.pagination?.totalPages ?? 1
+  const total = data?.pagination?.total ?? 0
 
   const columns: Column<Earning>[] = [
     {
@@ -80,7 +75,7 @@ export const EarningsPage = () => {
       <Table columns={columns} rows={rows} />
       <div className="flex flex-col gap-4 rounded-b-[18px] bg-[#f7f4ef] px-6 py-4 text-sm text-[#686f80] sm:flex-row sm:items-center sm:justify-between">
         <div>
-          Showing {rows.length} of {data?.transactions.length ?? 0} categories
+          Showing {rows.length} of {total} transactions
         </div>
         <Pagination
           currentPage={page}

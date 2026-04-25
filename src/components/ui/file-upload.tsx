@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react'
+import { useId, useRef, useState } from 'react'
 import { ImagePlus, UploadCloud } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { uploadService } from '@/services/upload-service'
@@ -28,12 +28,26 @@ export const FileUpload = ({
 }: FileUploadProps) => {
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const hasPreview = Boolean(value)
 
   const handleFile = async (file?: File | null) => {
     if (!file) return
-    const fileUrl = await uploadService.uploadFile(file, folder)
-    onChange(fileUrl)
+    try {
+      setError(null)
+      setIsUploading(true)
+      const fileUrl = await uploadService.uploadFile(file, folder)
+      onChange(fileUrl)
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error ? uploadError.message : 'Upload failed',
+      )
+    } finally {
+      setIsUploading(false)
+      if (inputRef.current) inputRef.current.value = ''
+    }
   }
 
   return (
@@ -55,9 +69,24 @@ export const FileUpload = ({
         className={cn(
           'relative flex w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#d6d8de] bg-[#f2efee] text-center transition hover:border-brand-orange',
           compact ? 'h-[88px]' : 'h-[118px]',
+          isDragging && 'border-brand-orange bg-[#fff6ef]',
           className,
         )}
         onClick={() => inputRef.current?.click()}
+        onDragEnter={(event) => {
+          event.preventDefault()
+          setIsDragging(true)
+        }}
+        onDragLeave={(event) => {
+          event.preventDefault()
+          setIsDragging(false)
+        }}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={(event) => {
+          event.preventDefault()
+          setIsDragging(false)
+          void handleFile(event.dataTransfer.files?.[0])
+        }}
         type="button"
       >
         {hasPreview ? (
@@ -69,7 +98,7 @@ export const FileUpload = ({
             />
             <span className="absolute inset-0 bg-brand-navy/18" />
             <span className="relative rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-brand-navy shadow-soft">
-              Change Image
+              {isUploading ? 'Uploading...' : 'Change Image'}
             </span>
           </>
         ) : (
@@ -80,13 +109,13 @@ export const FileUpload = ({
               <UploadCloud className="mb-2 size-5 text-[#7c8293]" />
             )}
             <span className="text-sm font-medium text-brand-navy">
-              {triggerText}
+              {isUploading ? 'Uploading...' : triggerText}
             </span>
           </>
         )}
       </button>
       <span className={cn('mt-1 block text-xs text-[#98a0b1]', helperClassName)}>
-        {helperText}
+        {error ?? helperText}
       </span>
     </div>
   )

@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FileUpload } from '@/components/ui/file-upload'
 import { Input } from '@/components/ui/input'
 import { adminService } from '@/services/admin-service'
 import { useAdminStore } from '@/store/admin-store'
@@ -16,7 +17,9 @@ type ProfileForm = {
 
 export const ProfilePage = () => {
   const setProfile = useAdminStore((state) => state.setProfile)
-  const { register, handleSubmit, reset } = useForm<ProfileForm>()
+  const { register, handleSubmit, reset, setValue, watch } =
+    useForm<ProfileForm>()
+  const image = watch('image')
 
   const { data } = useQuery({
     queryKey: ['profile'],
@@ -52,7 +55,7 @@ export const ProfilePage = () => {
               <img
                 alt="Admin"
                 className="size-24 rounded-full border-2 border-white object-cover shadow-panel"
-                src={data?.image}
+                src={image || data?.image}
               />
               <button
                 className="absolute bottom-1 right-0 flex size-7 items-center justify-center rounded-full bg-[#e9e9ec] text-[#6b7182]"
@@ -71,6 +74,14 @@ export const ProfilePage = () => {
               Edit Profile
             </button>
           </div>
+          <FileUpload
+            className="mx-auto h-[92px] max-w-[430px]"
+            folder="profiles"
+            helperText="Supports JPG, PNG (Max 5 MB)"
+            label="Profile Photo"
+            onChange={(value) => setValue('image', value)}
+            value={image}
+          />
           <Input label="User Name" {...register('name')} />
           <Input label="Email" {...register('email')} />
           <Input label="Contact No" {...register('contactNo')} />

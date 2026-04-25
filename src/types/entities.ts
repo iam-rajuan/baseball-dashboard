@@ -75,6 +75,9 @@ export type DashboardOverview = {
   totalPurchases: number
   monthlyRevenue: number
   categoryCount: number
+  totalUsers?: number
+  totalFreeDrills?: number
+  totalPremiumDrills?: number
   recentActivity: Earning[]
 }
 

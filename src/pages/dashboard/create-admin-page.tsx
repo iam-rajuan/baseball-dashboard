@@ -11,6 +11,7 @@ const schema = z
   .object({
     name: z.string().min(2, 'Name is required'),
     email: z.string().email('Enter a valid email'),
+    contactNo: z.string().min(5, 'Contact number is required'),
     password: z.string().min(8, 'Minimum 8 characters'),
     confirmPassword: z.string().min(8, 'Confirm password'),
     image: z.string().min(1, 'Profile image is required'),
@@ -30,10 +31,11 @@ export const CreateAdminPage = () => {
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: 'jhon doe',
-      email: 'abc@gmail.com',
-      password: 'admin@123',
-      confirmPassword: 'admin@123',
+      name: '',
+      email: '',
+      contactNo: '',
+      password: '',
+      confirmPassword: '',
       image: '',
     },
   })
@@ -45,7 +47,7 @@ export const CreateAdminPage = () => {
         email: values.email,
         password: values.password,
         image: values.image,
-        contactNo: '+1 222 333 4444',
+        contactNo: values.contactNo,
       }),
     onSuccess: () => reset(),
   })
@@ -67,6 +69,11 @@ export const CreateAdminPage = () => {
             error={errors.email?.message}
             label="Email"
             {...register('email')}
+          />
+          <Input
+            error={errors.contactNo?.message}
+            label="Contact No"
+            {...register('contactNo')}
           />
           <div className="grid gap-5 md:grid-cols-2">
             <Input

@@ -26,15 +26,15 @@ export const Modal = ({
       className="fixed inset-0 bg-[#111f5a]/20 backdrop-blur-[1px]"
       aria-hidden="true"
     />
-    <div className="fixed inset-0 overflow-y-auto p-4">
+    <div className="fixed inset-0 p-4">
       <div className="flex min-h-full items-center justify-center">
         <DialogPanel
           className={cn(
-            'w-full max-w-[720px] rounded-[22px] bg-white shadow-soft',
+            'flex max-h-[calc(100vh-32px)] w-[min(720px,calc(100vw-32px))] flex-col overflow-hidden rounded-[22px] bg-white shadow-soft',
             className,
           )}
         >
-          <div className="space-y-3 px-7 py-6">
+          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-7 py-6 [scrollbar-gutter:stable]">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-[20px] font-bold text-brand-ink">
@@ -55,7 +55,7 @@ export const Modal = ({
             {children}
           </div>
           {footer ? (
-            <div className="border-t border-brand-muted px-7 py-5">
+            <div className="shrink-0 border-t border-brand-muted px-7 py-5">
               {footer}
             </div>
           ) : null}

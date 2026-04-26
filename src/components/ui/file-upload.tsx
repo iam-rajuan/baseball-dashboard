@@ -72,7 +72,7 @@ export const FileUpload = ({
       <button
         className={cn(
           'relative flex w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#d6d8de] bg-[#f2efee] text-center transition hover:border-brand-orange',
-          compact ? 'h-[88px]' : 'h-[118px]',
+          compact ? 'h-[88px]' : hasPreview ? 'h-[168px]' : 'h-[118px]',
           isDragging && 'border-brand-orange bg-[#fff6ef]',
           disabled && 'cursor-not-allowed opacity-70 hover:border-[#d6d8de]',
           className,
@@ -102,10 +102,14 @@ export const FileUpload = ({
               className="absolute inset-0 h-full w-full"
               src={value}
             />
-            <span className="absolute inset-0 bg-brand-navy/18" />
-            <span className="relative rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-brand-navy shadow-soft">
-              {isUploading ? 'Uploading...' : 'Change Image'}
-            </span>
+            {isUploading ? (
+              <>
+                <span className="absolute inset-0 bg-brand-navy/18" />
+                <span className="relative rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-brand-navy shadow-soft">
+                  Uploading...
+                </span>
+              </>
+            ) : null}
           </>
         ) : (
           <>

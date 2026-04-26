@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { SettingsBackButton } from '@/components/settings/settings-back-button'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { settingsService } from '@/services/settings-service'
@@ -37,6 +38,7 @@ export const ChangePasswordPage = () => {
 
   return (
     <div className="space-y-6 px-1">
+      <SettingsBackButton />
       <h1 className="text-[30px] font-medium text-brand-ink">
         Change Password
       </h1>

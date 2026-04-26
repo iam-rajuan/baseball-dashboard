@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { RichTextEditor } from '@/components/shared/rich-text-editor'
+import { SettingsBackButton } from '@/components/settings/settings-back-button'
 import { settingsService } from '@/services/settings-service'
 import type { SettingsContent } from '@/types/entities'
 
@@ -37,6 +38,7 @@ export const ContentEditorPage = () => {
 
   return (
     <div className="space-y-6 px-1">
+      <SettingsBackButton />
       <RichTextEditor
         defaultValue={data?.[config.key] ?? ''}
         key={`${config.key}-${data?.[config.key] ?? ''}`}

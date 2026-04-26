@@ -70,6 +70,7 @@ export const SettingsPage = () => {
           <Link
             key={item.to}
             className="flex items-center justify-between border-b border-brand-line py-5 text-[20px] font-medium text-brand-ink last:border-b-0"
+            state={{ from: '/settings' }}
             to={item.to}
           >
             {item.label}

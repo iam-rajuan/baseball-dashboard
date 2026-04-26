@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { DrillFormModal } from '@/features/drills/drill-form-modal'
+import type { DrillSubmitValues } from '@/features/drills/drill-form-modal'
 import { AccessBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
@@ -55,12 +56,8 @@ export const DrillManagementPage = () => {
   })
 
   const saveMutation = useMutation({
-    mutationFn: (
-      values: Pick<
-        Drill,
-        'name' | 'categoryId' | 'description' | 'cover' | 'accessLevel'
-      > & { id?: string },
-    ) => drillService.save(values),
+    mutationFn: (values: DrillSubmitValues & { id?: string }) =>
+      drillService.save(values),
     onSuccess: async () => {
       setError(null)
       await Promise.all([

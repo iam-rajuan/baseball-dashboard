@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FileUpload } from '@/components/ui/file-upload'
 import { Input } from '@/components/ui/input'
@@ -16,18 +17,103 @@ const schema = z.object({
   categoryId: z.string().min(1, 'Category is required'),
   description: z.string().min(10, 'Description is required'),
   cover: z.string().min(1, 'Cover image is required'),
+  listIcon: z.string().min(1, 'List icon is required'),
   accessLevel: z.enum(['Free', 'Premium']),
+  equipment: z.array(z.object({ value: z.string() })),
+  steps: z.array(z.object({ value: z.string() })),
+  focusPoints: z.array(
+    z.object({
+      title: z.string(),
+      description: z.string(),
+    }),
+  ),
+}).superRefine((values, ctx) => {
+  if (!values.equipment.some((item) => item.value.trim())) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Add at least one equipment item',
+      path: ['equipment'],
+    })
+  }
+
+  if (!values.steps.some((item) => item.value.trim())) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Add at least one step direction',
+      path: ['steps'],
+    })
+  }
+
+  if (
+    !values.focusPoints.some(
+      (item) => item.title.trim() && item.description.trim(),
+    )
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Add at least one complete focus point',
+      path: ['focusPoints'],
+    })
+  }
 })
 
 type DrillFormValues = z.infer<typeof schema>
 
+export type DrillSubmitValues = Pick<
+  Drill,
+  | 'name'
+  | 'categoryId'
+  | 'description'
+  | 'cover'
+  | 'listIcon'
+  | 'accessLevel'
+  | 'equipment'
+  | 'steps'
+  | 'focusPoints'
+>
+
 type DrillFormModalProps = {
   open: boolean
   onClose: () => void
-  onSubmit: (values: DrillFormValues) => Promise<unknown>
+  onSubmit: (values: DrillSubmitValues) => Promise<unknown>
   categories: Category[]
   initialData?: Drill | null
 }
+
+const emptyTextRow = { value: '' }
+const emptyFocusPoint = { title: '', description: '' }
+const drillIconOptions = [
+  { label: 'Baseball', value: 'baseball-outline' },
+  { label: 'Target Circle', value: 'ellipse-outline' },
+  { label: 'Connection Link', value: 'link' },
+  { label: 'Trophy', value: 'trophy-outline' },
+  { label: 'Flame', value: 'flame-outline' },
+  { label: 'Shield', value: 'shield-outline' },
+  { label: 'Lock', value: 'lock-closed-outline' },
+]
+
+const toRows = (items?: string[]) =>
+  items?.length ? items.map((value) => ({ value })) : [emptyTextRow]
+
+const toFocusRows = (items?: Drill['focusPoints']) =>
+  items?.length
+    ? items.map((item) => ({
+        title: item.title?.trim() ?? '',
+        description: item.description?.trim() ?? '',
+      }))
+    : [emptyFocusPoint]
+
+const cleanTextRows = (items: { value: string }[]) =>
+  items.map((item) => item.value.trim()).filter(Boolean)
+
+const cleanFocusRows = (items: { title: string; description: string }[]) =>
+  items
+    .map((item) => {
+      const title = item.title.trim()
+      const description = item.description.trim()
+      return { title, description }
+    })
+    .filter((item) => item.title || item.description)
 
 export const DrillFormModal = ({
   open,
@@ -50,8 +136,24 @@ export const DrillFormModal = ({
       categoryId: '',
       description: '',
       cover: '',
+      listIcon: 'baseball-outline',
       accessLevel: 'Free',
+      equipment: [emptyTextRow],
+      steps: [emptyTextRow],
+      focusPoints: [emptyFocusPoint],
     },
+  })
+  const equipmentFields = useFieldArray({
+    control,
+    name: 'equipment',
+  })
+  const stepFields = useFieldArray({
+    control,
+    name: 'steps',
+  })
+  const focusFields = useFieldArray({
+    control,
+    name: 'focusPoints',
   })
 
   useEffect(() => {
@@ -61,15 +163,32 @@ export const DrillFormModal = ({
         categoryId: initialData?.categoryId ?? defaultCategoryId,
         description: initialData?.description ?? '',
         cover: initialData?.cover ?? '',
+        listIcon: initialData?.listIcon ?? 'baseball-outline',
         accessLevel: initialData?.accessLevel ?? 'Free',
+        equipment: toRows(initialData?.equipment),
+        steps: toRows(initialData?.steps),
+        focusPoints: toFocusRows(initialData?.focusPoints),
       })
     }
   }, [defaultCategoryId, initialData, open, reset])
 
+  const submit = (values: DrillFormValues) =>
+    onSubmit({
+      name: values.name.trim(),
+      categoryId: values.categoryId,
+      description: values.description.trim(),
+      cover: values.cover,
+      listIcon: values.listIcon,
+      accessLevel: values.accessLevel,
+      equipment: cleanTextRows(values.equipment),
+      steps: cleanTextRows(values.steps),
+      focusPoints: cleanFocusRows(values.focusPoints),
+    })
+
   return (
     <Modal
-      className="max-w-[560px]"
-      description="Create a new organizational bucket for your drills."
+      className="max-w-[720px]"
+      description="Add the exact content the mobile drill library needs for listing and detail screens."
       footer={
         <div className="flex gap-4">
           <Button
@@ -83,7 +202,7 @@ export const DrillFormModal = ({
           <Button
             className="h-12 flex-1 rounded-2xl"
             disabled={isSubmitting}
-            onClick={handleSubmit(onSubmit)}
+            onClick={handleSubmit(submit)}
             type="button"
           >
             {initialData ? 'Update Drill' : 'Save Drill'}
@@ -117,8 +236,8 @@ export const DrillFormModal = ({
         <Textarea
           className="min-h-[108px] rounded-xl border-0 bg-[#efeced] text-[15px] placeholder:text-[#b1b6c2]"
           error={errors.description?.message}
-          label="Description"
-          placeholder="Describe the steps, focus points, and necessary equipment for this drill..."
+          label="Setup Process"
+          placeholder="Explain the drill setup and what the player should prepare before starting..."
           {...register('description')}
         />
         <Controller
@@ -137,6 +256,18 @@ export const DrillFormModal = ({
             />
           )}
         />
+        <Select
+          className="h-11 rounded-xl border-0 bg-[#efeced] text-[15px]"
+          error={errors.listIcon?.message}
+          label="Included Drill Icon"
+          {...register('listIcon')}
+        >
+          {drillIconOptions.map((icon) => (
+            <option key={icon.value} value={icon.value}>
+              {icon.label}
+            </option>
+          ))}
+        </Select>
         <Controller
           control={control}
           name="accessLevel"
@@ -158,6 +289,149 @@ export const DrillFormModal = ({
             </div>
           )}
         />
+        <div className="space-y-3 rounded-2xl border border-brand-line p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-[#505666]">
+                Equipment Needed
+              </span>
+              <p className="mt-1 text-xs text-[#7a8498]">
+                Shown as bullet points on the drill detail screen.
+              </p>
+            </div>
+            <Button
+              className="h-9 rounded-xl px-3"
+              onClick={() => equipmentFields.append({ value: '' })}
+              type="button"
+              variant="secondary"
+            >
+              <Plus className="mr-2 size-4" />
+              Add
+            </Button>
+          </div>
+          <div className="space-y-2">
+            {errors.equipment?.message ? (
+              <p className="text-xs font-medium text-red-500">
+                {errors.equipment.message}
+              </p>
+            ) : null}
+            {equipmentFields.fields.map((field, index) => (
+              <div className="flex items-start gap-2" key={field.id}>
+                <Input
+                  className="h-11 rounded-xl border-0 bg-[#efeced] text-[15px]"
+                  placeholder="Baseball bat"
+                  {...register(`equipment.${index}.value`)}
+                />
+                <button
+                  className="mt-1 rounded-xl p-3 text-red-500 transition hover:bg-red-50 disabled:opacity-40"
+                  disabled={equipmentFields.fields.length === 1}
+                  onClick={() => equipmentFields.remove(index)}
+                  type="button"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-3 rounded-2xl border border-brand-line p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-[#505666]">
+                Step-by-Step Directions
+              </span>
+              <p className="mt-1 text-xs text-[#7a8498]">
+                Each row becomes a numbered instruction in the app.
+              </p>
+            </div>
+            <Button
+              className="h-9 rounded-xl px-3"
+              onClick={() => stepFields.append({ value: '' })}
+              type="button"
+              variant="secondary"
+            >
+              <Plus className="mr-2 size-4" />
+              Add
+            </Button>
+          </div>
+          <div className="space-y-2">
+            {errors.steps?.message ? (
+              <p className="text-xs font-medium text-red-500">
+                {errors.steps.message}
+              </p>
+            ) : null}
+            {stepFields.fields.map((field, index) => (
+              <div className="flex items-start gap-2" key={field.id}>
+                <Input
+                  className="h-11 rounded-xl border-0 bg-[#efeced] text-[15px]"
+                  placeholder={`${index + 1}. Get into regular batting stance.`}
+                  {...register(`steps.${index}.value`)}
+                />
+                <button
+                  className="mt-1 rounded-xl p-3 text-red-500 transition hover:bg-red-50 disabled:opacity-40"
+                  disabled={stepFields.fields.length === 1}
+                  onClick={() => stepFields.remove(index)}
+                  type="button"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-3 rounded-2xl border border-brand-line p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-[#505666]">
+                Key Focus Points
+              </span>
+              <p className="mt-1 text-xs text-[#7a8498]">
+                Title and detail are displayed as focus cards in the app.
+              </p>
+            </div>
+            <Button
+              className="h-9 rounded-xl px-3"
+              onClick={() => focusFields.append({ title: '', description: '' })}
+              type="button"
+              variant="secondary"
+            >
+              <Plus className="mr-2 size-4" />
+              Add
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {errors.focusPoints?.message ? (
+              <p className="text-xs font-medium text-red-500">
+                {errors.focusPoints.message}
+              </p>
+            ) : null}
+            {focusFields.fields.map((field, index) => (
+              <div
+                className="grid gap-2 rounded-2xl bg-[#f7f4ef] p-3 md:grid-cols-[0.8fr_1.2fr_auto]"
+                key={field.id}
+              >
+                <Input
+                  className="h-11 rounded-xl border-0 bg-white text-[15px]"
+                  placeholder="Direction of Step"
+                  {...register(`focusPoints.${index}.title`)}
+                />
+                <Input
+                  className="h-11 rounded-xl border-0 bg-white text-[15px]"
+                  placeholder="Focus on stepping straight toward the pitcher."
+                  {...register(`focusPoints.${index}.description`)}
+                />
+                <button
+                  className="rounded-xl p-3 text-red-500 transition hover:bg-red-50 disabled:opacity-40"
+                  disabled={focusFields.fields.length === 1}
+                  onClick={() => focusFields.remove(index)}
+                  type="button"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </Modal>
   )

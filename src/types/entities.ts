@@ -21,10 +21,14 @@ export type Drill = {
   categoryId: string
   description: string
   cover: string
+  listIcon: string
   coverUrl?: string
   coverPhoto?: string
   coverPhotoUrl?: string
   imageUrl?: string
+  steps: string[]
+  equipment: string[]
+  focusPoints: { title: string; description: string }[]
   accessLevel: AccessLevel
   createdAt: string
 }

@@ -69,6 +69,13 @@ const drills: Drill[] = [
     description:
       'Build balanced lower half loading, rotation timing, and clean finish mechanics.',
     cover: placeholderCover,
+    listIcon: 'baseball-outline',
+    steps: ['Load into an athletic base.', 'Rotate through contact.', 'Finish balanced.'],
+    equipment: ['Baseball bat', 'Batting helmet', 'Baseballs'],
+    focusPoints: [
+      { title: 'Lower half', description: 'Drive from the ground up.' },
+      { title: 'Finish', description: 'Stay balanced after contact.' },
+    ],
     accessLevel: 'Premium',
     createdAt: '2024-10-24T14:22:00Z',
   },
@@ -79,6 +86,13 @@ const drills: Drill[] = [
     description:
       'Improve transfer speed, release compactness, and footwork under pressure.',
     cover: placeholderCover,
+    listIcon: 'flame-outline',
+    steps: ['Receive with clean hands.', 'Transfer quickly.', 'Throw through the target.'],
+    equipment: ['Catcher gear', 'Baseballs', 'Stopwatch'],
+    focusPoints: [
+      { title: 'Transfer speed', description: 'Keep the exchange compact.' },
+      { title: 'Footwork', description: 'Gain ground toward second.' },
+    ],
     accessLevel: 'Free',
     createdAt: '2024-10-22T11:12:00Z',
   },
@@ -89,6 +103,13 @@ const drills: Drill[] = [
     description:
       'Target-based mound sequence that sharpens command across four quadrants.',
     cover: placeholderCover,
+    listIcon: 'ellipse-outline',
+    steps: ['Set four command targets.', 'Throw five pitches per target.', 'Track misses after each round.'],
+    equipment: ['Baseballs', 'Strike zone target', 'Clipboard'],
+    focusPoints: [
+      { title: 'Intent', description: 'Commit to the target before delivery.' },
+      { title: 'Adjustment', description: 'Correct misses immediately.' },
+    ],
     accessLevel: 'Premium',
     createdAt: '2024-10-20T16:40:00Z',
   },
@@ -99,6 +120,13 @@ const drills: Drill[] = [
     description:
       'Pre-pitch reset flow for high-pressure innings and mid-game recovery.',
     cover: placeholderCover,
+    listIcon: 'shield-outline',
+    steps: ['Step off the rubber.', 'Take one controlled breath.', 'Lock onto the next pitch plan.'],
+    equipment: ['Practice mound', 'Baseballs'],
+    focusPoints: [
+      { title: 'Breathing', description: 'Slow the game down before the next pitch.' },
+      { title: 'Routine', description: 'Repeat the same reset every time.' },
+    ],
     accessLevel: 'Premium',
     createdAt: '2024-10-19T09:05:00Z',
   },

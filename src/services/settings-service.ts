@@ -1,18 +1,14 @@
 import { api, unwrap } from '@/services/api'
 import type { SettingsContent } from '@/types/entities'
 
-const contentMap: Record<keyof SettingsContent, string> = {
-  privacyPolicy: 'privacyPolicy',
-  terms: 'terms',
-  aboutUs: 'aboutUs',
-}
+export type CmsPageKey = 'privacy_policy' | 'terms_conditions' | 'about_us'
 
 export const settingsService = {
   getSettings: async (): Promise<SettingsContent> =>
     unwrap(api.get('/settings/admin/content')),
-  updateSection: async (key: keyof SettingsContent, value: string) => {
+  updateSection: async (key: CmsPageKey, value: string): Promise<SettingsContent> => {
     return unwrap(
-      api.patch(`/settings/admin/content/${contentMap[key]}`, {
+      api.patch(`/settings/admin/content/${key}`, {
         value,
       }),
     )

@@ -71,6 +71,7 @@ export type SettingsContent = {
   privacyPolicy: string
   terms: string
   aboutUs: string
+  updatedAt: string | null
 }
 
 export type NotificationItem = {

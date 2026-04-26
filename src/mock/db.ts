@@ -265,6 +265,7 @@ const settings: SettingsContent = {
   privacyPolicy: settingsParagraph,
   terms: settingsParagraph,
   aboutUs: settingsParagraph,
+  updatedAt: new Date().toISOString(),
 }
 
 export const mockDb = {

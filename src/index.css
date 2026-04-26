@@ -76,4 +76,57 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .cms-editor {
+    @apply text-[15px] leading-7;
+  }
+
+  .cms-editor p {
+    @apply mb-4;
+  }
+
+  .cms-editor h1 {
+    @apply mb-4 text-3xl font-semibold leading-tight text-brand-ink;
+  }
+
+  .cms-editor h2 {
+    @apply mb-3 text-2xl font-semibold leading-tight text-brand-ink;
+  }
+
+  .cms-editor h3 {
+    @apply mb-3 text-xl font-semibold leading-tight text-brand-ink;
+  }
+
+  .cms-editor ul,
+  .cms-editor ol {
+    @apply mb-4 pl-6;
+  }
+
+  .cms-editor ul {
+    @apply list-disc;
+  }
+
+  .cms-editor ol {
+    @apply list-decimal;
+  }
+
+  .cms-editor li {
+    @apply mb-2;
+  }
+
+  .cms-editor blockquote {
+    @apply mb-4 border-l-4 border-brand-orange pl-4 text-[#596174];
+  }
+
+  .cms-editor :last-child {
+    @apply mb-0;
+  }
+
+  .cms-editor .is-editor-empty:first-child::before {
+    color: #98a0b1;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
 }

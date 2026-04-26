@@ -33,6 +33,7 @@ export const sidebarLinks: SidebarLink[] = [
   },
   { label: 'Situations', to: '/situations', icon: Spline },
   { label: 'Reports', to: '/reports', icon: ShieldCheck },
-  { label: 'Create Admin', to: '/create-admin', icon: ShieldCheck },
+  // Hidden for now. Keep the page available in code for future re-enable.
+  // { label: 'Create Admin', to: '/create-admin', icon: ShieldCheck },
   { label: 'Settings', to: '/settings', icon: Settings },
 ]

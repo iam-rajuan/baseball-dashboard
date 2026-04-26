@@ -6,10 +6,13 @@ import { CategoryFormModal } from '@/features/categories/category-form-modal'
 import { AccessBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Pagination } from '@/components/ui/pagination'
+import { StableImage } from '@/components/ui/stable-image'
 import { Table, type Column } from '@/components/ui/table'
 import { categoryService } from '@/services/category-service'
 import type { Category } from '@/types/entities'
+import { isImageReference } from '@/utils/asset-url'
 
 const pageSize = 6
 
@@ -19,6 +22,8 @@ export const DrillCategoriesPage = () => {
   const [page, setPage] = useState(1)
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
+  const [deleting, setDeleting] = useState<Category | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const accessLevel =
     filter === 'All'
@@ -40,19 +45,39 @@ export const DrillCategoriesPage = () => {
 
   const saveMutation = useMutation({
     mutationFn: (
-      values: Omit<Category, 'id' | 'totalDrills'> & { id?: string },
+      values: Pick<
+        Category,
+        'name' | 'subtitle' | 'cover' | 'icon' | 'accessLevel'
+      > & { id?: string },
     ) => categoryService.save(values),
     onSuccess: async () => {
+      setError(null)
       await queryClient.invalidateQueries({ queryKey: ['categories'] })
       setOpen(false)
       setEditing(null)
+    },
+    onError: (mutationError) => {
+      setError(
+        mutationError instanceof Error
+          ? mutationError.message
+          : 'Category save failed',
+      )
     },
   })
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => categoryService.remove(id),
     onSuccess: async () => {
+      setError(null)
+      setDeleting(null)
       await queryClient.invalidateQueries({ queryKey: ['categories'] })
+    },
+    onError: (mutationError) => {
+      setError(
+        mutationError instanceof Error
+          ? mutationError.message
+          : 'Category delete failed',
+      )
     },
   })
 
@@ -67,7 +92,22 @@ export const DrillCategoriesPage = () => {
       render: (row) => (
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-brand-navy text-lg text-white">
-            {row.icon}
+            {isImageReference(row.icon) ? (
+              <StableImage
+                alt={`${row.name} icon`}
+                className="size-10 rounded-xl"
+                fallback={
+                  <span className="text-xs font-semibold">
+                    {row.name.slice(0, 2).toUpperCase()}
+                  </span>
+                }
+                src={row.icon}
+              />
+            ) : (
+              <span className="truncate px-1 text-xs font-semibold">
+                {row.icon || row.name.slice(0, 2).toUpperCase()}
+              </span>
+            )}
           </div>
           <span className="font-medium text-[#9aa1b1]">{row.name}</span>
         </div>
@@ -97,7 +137,7 @@ export const DrillCategoriesPage = () => {
           >
             <Pencil className="size-4" />
           </button>
-          <button onClick={() => deleteMutation.mutate(row.id)} type="button">
+          <button onClick={() => setDeleting(row)} type="button">
             <Trash2 className="size-4" />
           </button>
         </div>
@@ -148,6 +188,11 @@ export const DrillCategoriesPage = () => {
           ))}
         </div>
       </Card>
+      {error ? (
+        <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+          {error}
+        </div>
+      ) : null}
       <Table columns={columns} rows={rows} />
       <div className="flex flex-col gap-4 rounded-b-[18px] bg-[#f7f4ef] px-6 py-4 text-sm text-[#686f80] sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -169,6 +214,20 @@ export const DrillCategoriesPage = () => {
           saveMutation.mutateAsync({ ...values, id: editing?.id })
         }
         open={open}
+      />
+      <ConfirmDialog
+        description={
+          deleting
+            ? `Delete "${deleting.name}"? This cannot be undone. If this category has drills, the backend will block the delete.`
+            : ''
+        }
+        isPending={deleteMutation.isPending}
+        onCancel={() => setDeleting(null)}
+        onConfirm={() => {
+          if (deleting) deleteMutation.mutate(deleting.id)
+        }}
+        open={Boolean(deleting)}
+        title="Delete Category"
       />
     </div>
   )

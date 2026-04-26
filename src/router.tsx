@@ -7,7 +7,8 @@ import { ForgotPasswordPage } from '@/pages/auth/forgot-password-page'
 import { LoginPage } from '@/pages/auth/login-page'
 import { OtpVerificationPage } from '@/pages/auth/otp-verification-page'
 import { ResetPasswordPage } from '@/pages/auth/reset-password-page'
-import { CreateAdminPage } from '@/pages/dashboard/create-admin-page'
+// Hidden for now. Keep the page available in code for future re-enable.
+// import { CreateAdminPage } from '@/pages/dashboard/create-admin-page'
 import { DashboardOverviewPage } from '@/pages/dashboard/dashboard-overview-page'
 import { DrillCategoriesPage } from '@/pages/dashboard/drill-categories-page'
 import { DrillManagementPage } from '@/pages/dashboard/drill-management-page'
@@ -58,7 +59,8 @@ export const router = createBrowserRouter([
       { path: 'reports', element: <ReportsPage /> },
       { path: 'earnings', element: <EarningsPage /> },
       { path: 'situations', element: <SituationsPage /> },
-      { path: 'create-admin', element: <CreateAdminPage /> },
+      // Hidden for now. Keep the route available in code for future re-enable.
+      // { path: 'create-admin', element: <CreateAdminPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'settings', element: <SettingsPage /> },
       { path: 'settings/change-password', element: <ChangePasswordPage /> },

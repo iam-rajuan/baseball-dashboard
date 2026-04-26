@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom'
 import { DrillFormModal } from '@/features/drills/drill-form-modal'
 import { AccessBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Pagination } from '@/components/ui/pagination'
 import { Select } from '@/components/ui/select'
+import { StableImage } from '@/components/ui/stable-image'
 import { Table, type Column } from '@/components/ui/table'
 import { categoryService } from '@/services/category-service'
 import { drillService } from '@/services/drill-service'
@@ -24,6 +26,8 @@ export const DrillManagementPage = () => {
   const [page, setPage] = useState(1)
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Drill | null>(null)
+  const [deleting, setDeleting] = useState<Drill | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
@@ -51,9 +55,14 @@ export const DrillManagementPage = () => {
   })
 
   const saveMutation = useMutation({
-    mutationFn: (values: Omit<Drill, 'id' | 'createdAt'> & { id?: string }) =>
-      drillService.save(values),
+    mutationFn: (
+      values: Pick<
+        Drill,
+        'name' | 'categoryId' | 'description' | 'cover' | 'accessLevel'
+      > & { id?: string },
+    ) => drillService.save(values),
     onSuccess: async () => {
+      setError(null)
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['drills'] }),
         queryClient.invalidateQueries({ queryKey: ['categories'] }),
@@ -61,12 +70,26 @@ export const DrillManagementPage = () => {
       setOpen(false)
       setEditing(null)
     },
+    onError: (mutationError) => {
+      setError(
+        mutationError instanceof Error ? mutationError.message : 'Drill save failed',
+      )
+    },
   })
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => drillService.remove(id),
     onSuccess: async () => {
+      setError(null)
+      setDeleting(null)
       await queryClient.invalidateQueries({ queryKey: ['drills'] })
+    },
+    onError: (mutationError) => {
+      setError(
+        mutationError instanceof Error
+          ? mutationError.message
+          : 'Drill delete failed',
+      )
     },
   })
 
@@ -79,7 +102,19 @@ export const DrillManagementPage = () => {
       key: 'name',
       header: 'Drill Name',
       render: (row) => (
-        <span className="font-semibold text-brand-ink">{row.name}</span>
+        <div className="flex items-center gap-3">
+          <StableImage
+            alt={`${row.name} cover`}
+            className="h-10 w-14 rounded-xl"
+            fallback={
+              <span className="text-xs font-semibold text-brand-navy">
+                {row.name.slice(0, 2).toUpperCase()}
+              </span>
+            }
+            src={row.cover}
+          />
+          <span className="font-semibold text-brand-ink">{row.name}</span>
+        </div>
       ),
     },
     {
@@ -111,7 +146,7 @@ export const DrillManagementPage = () => {
           >
             <Pencil className="size-4" />
           </button>
-          <button onClick={() => deleteMutation.mutate(row.id)} type="button">
+          <button onClick={() => setDeleting(row)} type="button">
             <Trash2 className="size-4" />
           </button>
         </div>
@@ -163,6 +198,11 @@ export const DrillManagementPage = () => {
           <option value="Locked">Locked</option>
         </Select>
       </div>
+      {error ? (
+        <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+          {error}
+        </div>
+      ) : null}
       <Table columns={columns} rows={rows} />
       <div className="flex flex-col gap-4 rounded-b-[18px] bg-[#f7f4ef] px-6 py-4 text-sm text-[#686f80] sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -185,6 +225,18 @@ export const DrillManagementPage = () => {
           saveMutation.mutateAsync({ ...values, id: editing?.id })
         }
         open={open}
+      />
+      <ConfirmDialog
+        description={
+          deleting ? `Delete "${deleting.name}"? This cannot be undone.` : ''
+        }
+        isPending={deleteMutation.isPending}
+        onCancel={() => setDeleting(null)}
+        onConfirm={() => {
+          if (deleting) deleteMutation.mutate(deleting.id)
+        }}
+        open={Boolean(deleting)}
+        title="Delete Drill"
       />
     </div>
   )

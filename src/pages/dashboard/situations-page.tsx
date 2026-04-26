@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { SituationFormModal } from '@/features/situations/situation-form-modal'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Pagination } from '@/components/ui/pagination'
 import { StableImage } from '@/components/ui/stable-image'
 import { situationService } from '@/services/situation-service'
@@ -16,6 +17,7 @@ export const SituationsPage = () => {
   const [page, setPage] = useState(1)
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Situation | null>(null)
+  const [deleting, setDeleting] = useState<Situation | null>(null)
 
   const { data } = useQuery({
     queryKey: ['situations', page],
@@ -35,6 +37,7 @@ export const SituationsPage = () => {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => situationService.remove(id),
     onSuccess: async () => {
+      setDeleting(null)
       await queryClient.invalidateQueries({ queryKey: ['situations'] })
     },
   })
@@ -57,7 +60,7 @@ export const SituationsPage = () => {
           <SituationCard
             key={item.id}
             item={item}
-            onDelete={() => deleteMutation.mutate(item.id)}
+            onDelete={() => setDeleting(item)}
             onEdit={() => {
               setEditing(item)
               setOpen(true)
@@ -86,6 +89,18 @@ export const SituationsPage = () => {
           saveMutation.mutateAsync({ ...values, id: editing?.id })
         }
         open={open}
+      />
+      <ConfirmDialog
+        description={
+          deleting ? `Delete "${deleting.title}"? This cannot be undone.` : ''
+        }
+        isPending={deleteMutation.isPending}
+        onCancel={() => setDeleting(null)}
+        onConfirm={() => {
+          if (deleting) deleteMutation.mutate(deleting.id)
+        }}
+        open={Boolean(deleting)}
+        title="Delete Situation"
       />
     </div>
   )

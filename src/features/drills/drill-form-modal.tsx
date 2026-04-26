@@ -36,6 +36,7 @@ export const DrillFormModal = ({
   categories,
   initialData,
 }: DrillFormModalProps) => {
+  const defaultCategoryId = categories[0]?.id ?? ''
   const {
     register,
     control,
@@ -57,13 +58,13 @@ export const DrillFormModal = ({
     if (open) {
       reset({
         name: initialData?.name ?? '',
-        categoryId: initialData?.categoryId ?? categories[0]?.id ?? '',
+        categoryId: initialData?.categoryId ?? defaultCategoryId,
         description: initialData?.description ?? '',
         cover: initialData?.cover ?? '',
         accessLevel: initialData?.accessLevel ?? 'Free',
       })
     }
-  }, [categories, initialData, open, reset])
+  }, [defaultCategoryId, initialData, open, reset])
 
   return (
     <Modal

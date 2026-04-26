@@ -1,7 +1,10 @@
 import { api, unwrap, unwrapPaginated } from '@/services/api'
 import type { Drill } from '@/types/entities'
 
-export type DrillPayload = Omit<Drill, 'id' | 'createdAt'> & {
+export type DrillPayload = Pick<
+  Drill,
+  'name' | 'categoryId' | 'description' | 'cover' | 'accessLevel'
+> & {
   id?: string
 }
 
@@ -47,15 +50,16 @@ export const drillService = {
       pagination: result.pagination,
     })),
   save: async (payload: DrillPayload): Promise<unknown> => {
+    const body = {
+      name: payload.name,
+      categoryId: payload.categoryId,
+      description: payload.description,
+      cover: payload.cover,
+      accessLevel: payload.accessLevel.toLowerCase(),
+    }
     const request = payload.id
-      ? api.patch(`/drills/${payload.id}`, {
-          ...payload,
-          accessLevel: payload.accessLevel.toLowerCase(),
-        })
-      : api.post('/drills', {
-          ...payload,
-          accessLevel: payload.accessLevel.toLowerCase(),
-        })
+      ? api.patch(`/drills/${payload.id}`, body)
+      : api.post('/drills', body)
 
     return unwrap(request)
   },

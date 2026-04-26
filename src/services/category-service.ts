@@ -1,7 +1,10 @@
 import { api, unwrap, unwrapPaginated } from '@/services/api'
 import type { Category } from '@/types/entities'
 
-export type CategoryPayload = Omit<Category, 'id' | 'totalDrills'> & {
+export type CategoryPayload = Pick<
+  Category,
+  'name' | 'subtitle' | 'cover' | 'icon' | 'accessLevel'
+> & {
   id?: string
 }
 
@@ -45,15 +48,16 @@ export const categoryService = {
       pagination: result.pagination,
     })),
   save: async (payload: CategoryPayload): Promise<Category> => {
+    const body = {
+      name: payload.name,
+      subtitle: payload.subtitle,
+      cover: payload.cover,
+      icon: payload.icon,
+      accessLevel: payload.accessLevel.toLowerCase(),
+    }
     const request = payload.id
-      ? api.patch(`/drill-categories/${payload.id}`, {
-          ...payload,
-          accessLevel: payload.accessLevel.toLowerCase(),
-        })
-      : api.post('/drill-categories', {
-          ...payload,
-          accessLevel: payload.accessLevel.toLowerCase(),
-        })
+      ? api.patch(`/drill-categories/${payload.id}`, body)
+      : api.post('/drill-categories', body)
 
     return unwrap(request)
   },

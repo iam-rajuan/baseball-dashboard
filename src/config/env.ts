@@ -19,8 +19,13 @@ const getUrlOrigin = (value: string, key: keyof ImportMetaEnv) => {
 }
 
 const apiBaseUrl = trimTrailingSlash(getRequiredEnv('VITE_API_BASE_URL'))
+const backendBaseUrl = trimTrailingSlash(getRequiredEnv('VITE_BACKEND_BASE_URL'))
+const uploadsBaseUrl = trimTrailingSlash(getRequiredEnv('VITE_UPLOADS_BASE_URL'))
 
 export const env = {
   apiBaseUrl,
+  backendBaseUrl,
+  uploadsBaseUrl,
   apiOrigin: getUrlOrigin(apiBaseUrl, 'VITE_API_BASE_URL'),
+  backendOrigin: getUrlOrigin(backendBaseUrl, 'VITE_BACKEND_BASE_URL'),
 } as const

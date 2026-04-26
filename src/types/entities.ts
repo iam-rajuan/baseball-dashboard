@@ -32,10 +32,14 @@ export type Drill = {
 export type Situation = {
   id: string
   title: string
+  category: string
+  shortLabel: string
   image: string
   imageUrl?: string
   displayOrder: number
   featured: boolean
+  diagramVariant: 'infield' | 'outfield'
+  instructions: { player: string; detail: string }[]
   createdAt: string
 }
 

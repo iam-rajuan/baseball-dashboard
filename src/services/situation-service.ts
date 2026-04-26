@@ -10,10 +10,16 @@ const toStringValue = (value: unknown) => (typeof value === 'string' ? value : '
 const mapSituation = (item: Record<string, unknown>): Situation => ({
   id: String(item.id),
   title: toStringValue(item.title),
+  category: toStringValue(item.category || 'Specific Situations'),
+  shortLabel: toStringValue(item.shortLabel || String(item.title || '').slice(0, 2).toUpperCase()),
   image: toStringValue(item.image || item.imageUrl),
   imageUrl: toStringValue(item.imageUrl),
   displayOrder: Number(item.displayOrder),
   featured: Boolean(item.featured),
+  diagramVariant: String(item.diagramVariant || 'infield') as 'infield' | 'outfield',
+  instructions: Array.isArray(item.instructions)
+    ? item.instructions.map((instruction) => instruction as Situation['instructions'][number])
+    : [],
   createdAt: toStringValue(item.createdAt),
 })
 

@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from 'react'
-import { ImagePlus, UploadCloud } from 'lucide-react'
+import { ImagePlus, Trash2, UploadCloud } from 'lucide-react'
 import { StableImage } from '@/components/ui/stable-image'
 import { cn } from '@/utils/cn'
 import { uploadService } from '@/services/upload-service'
@@ -120,6 +120,27 @@ export const FileUpload = ({
           </>
         )}
       </button>
+      {hasPreview ? (
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button
+            className="inline-flex h-10 flex-1 items-center justify-center rounded-xl border border-brand-line bg-white px-4 text-sm font-semibold text-brand-navy transition hover:bg-brand-muted disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={disabled || isUploading}
+            onClick={() => inputRef.current?.click()}
+            type="button"
+          >
+            Change Image
+          </button>
+          <button
+            className="inline-flex h-10 flex-1 items-center justify-center rounded-xl border border-red-100 bg-white px-4 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={disabled || isUploading}
+            onClick={() => onChange('')}
+            type="button"
+          >
+            <Trash2 className="mr-2 size-4" />
+            Delete Image
+          </button>
+        </div>
+      ) : null}
       <span className={cn('mt-1 block text-xs text-[#98a0b1]', helperClassName)}>
         {error ?? helperText}
       </span>

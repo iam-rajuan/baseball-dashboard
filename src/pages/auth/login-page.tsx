@@ -16,6 +16,11 @@ const schema = z.object({
 
 type LoginValues = z.infer<typeof schema>
 
+const defaultAdminCredentials: LoginValues = {
+  email: 'admin@mariettabaseball.com',
+  password: 'admin@123',
+}
+
 export const LoginPage = () => {
   const navigate = useNavigate()
   const setSession = useAuthStore((state) => state.setSession)
@@ -26,10 +31,7 @@ export const LoginPage = () => {
     formState: { errors },
   } = useForm<LoginValues>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: defaultAdminCredentials,
   })
 
   const mutation = useMutation({

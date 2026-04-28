@@ -3,7 +3,7 @@ import type { Category } from '@/types/entities'
 
 export type CategoryPayload = Pick<
   Category,
-  'name' | 'subtitle' | 'cover' | 'icon' | 'accessLevel'
+  'name' | 'subtitle' | 'cover' | 'icon' | 'accentIcon' | 'accessLevel'
 > & {
   id?: string
 }
@@ -30,6 +30,7 @@ const mapCategory = (item: Record<string, unknown>): Category => ({
   coverPhotoUrl: toStringValue(item.coverPhotoUrl),
   icon: toStringValue(item.icon || item.iconUrl),
   iconUrl: toStringValue(item.iconUrl),
+  accentIcon: toStringValue(item.accentIcon) || 'baseball-outline',
   imageUrl: toStringValue(item.imageUrl),
   accessLevel: normalizeAccessLevel(String(item.accessLevel)),
   totalDrills: Number(item.totalDrills),
@@ -53,6 +54,7 @@ export const categoryService = {
       subtitle: payload.subtitle,
       cover: payload.cover,
       icon: payload.icon,
+      accentIcon: payload.accentIcon,
       accessLevel: payload.accessLevel.toLowerCase(),
     }
     const request = payload.id

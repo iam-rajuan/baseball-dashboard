@@ -10,6 +10,7 @@ export type Category = {
   coverPhotoUrl?: string
   icon: string
   iconUrl?: string
+  accentIcon: string
   imageUrl?: string
   accessLevel: AccessLevel
   totalDrills: number

@@ -10,6 +10,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Pagination } from '@/components/ui/pagination'
 import { StableImage } from '@/components/ui/stable-image'
 import { Table, type Column } from '@/components/ui/table'
+import { categoryIconOptions } from '@/constants/options'
 import { categoryService } from '@/services/category-service'
 import type { Category } from '@/types/entities'
 import { isImageReference } from '@/utils/asset-url'
@@ -47,7 +48,7 @@ export const DrillCategoriesPage = () => {
     mutationFn: (
       values: Pick<
         Category,
-        'name' | 'subtitle' | 'cover' | 'icon' | 'accessLevel'
+        'name' | 'subtitle' | 'cover' | 'icon' | 'accentIcon' | 'accessLevel'
       > & { id?: string },
     ) => categoryService.save(values),
     onSuccess: async () => {
@@ -111,6 +112,16 @@ export const DrillCategoriesPage = () => {
           </div>
           <span className="font-medium text-[#9aa1b1]">{row.name}</span>
         </div>
+      ),
+    },
+    {
+      key: 'accentIcon',
+      header: 'Mobile Icon',
+      render: (row) => (
+        <span className="inline-flex rounded-full bg-[#f7f4ef] px-3 py-1 text-xs font-semibold text-brand-ink">
+          {categoryIconOptions.find((icon) => icon.value === row.accentIcon)
+            ?.label ?? row.accentIcon}
+        </span>
       ),
     },
     {

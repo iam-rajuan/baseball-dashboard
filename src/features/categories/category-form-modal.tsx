@@ -7,7 +7,9 @@ import { FileUpload } from '@/components/ui/file-upload'
 import { Input } from '@/components/ui/input'
 import { Modal } from '@/components/ui/modal'
 import { SegmentedControl } from '@/components/ui/segmented-control'
+import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { categoryIconOptions } from '@/constants/options'
 import type { Category } from '@/types/entities'
 
 const schema = z.object({
@@ -15,6 +17,7 @@ const schema = z.object({
   subtitle: z.string().min(2, 'Subtitle is required'),
   cover: z.string().min(1, 'Cover is required'),
   icon: z.string().min(1, 'Icon is required'),
+  accentIcon: z.string().min(1, 'Mobile app icon is required'),
   accessLevel: z.enum(['Free', 'Premium']),
 })
 
@@ -46,6 +49,7 @@ export const CategoryFormModal = ({
       subtitle: '',
       cover: '',
       icon: '',
+      accentIcon: 'baseball-outline',
       accessLevel: 'Free',
     },
   })
@@ -57,6 +61,7 @@ export const CategoryFormModal = ({
         subtitle: initialData?.subtitle ?? '',
         cover: initialData?.cover ?? '',
         icon: initialData?.icon ?? '',
+        accentIcon: initialData?.accentIcon ?? 'baseball-outline',
         accessLevel: initialData?.accessLevel ?? 'Free',
       })
     }
@@ -65,7 +70,7 @@ export const CategoryFormModal = ({
   return (
     <Modal
       className="max-w-[560px]"
-      description="Create a new organizational bucket for your drills."
+      description="Create a drill category with a dashboard image icon and a mobile app category icon."
       footer={
         <div className="flex gap-4">
           <Button
@@ -133,13 +138,25 @@ export const CategoryFormModal = ({
                 helperClassName="hidden"
                 helperText={errors.icon?.message ?? 'Upload icon'}
                 folder="categories/icons"
-                label="Icon Selection"
+                label="Admin Dashboard Icon"
                 onChange={field.onChange}
                 triggerText="Upload Icon"
                 value={field.value}
               />
             )}
           />
+          <Select
+            className="h-10 rounded-xl border-0 bg-[#efeced] text-[15px]"
+            error={errors.accentIcon?.message}
+            label="Mobile App Icon"
+            {...register('accentIcon')}
+          >
+            {categoryIconOptions.map((icon) => (
+              <option key={icon.value} value={icon.value}>
+                {icon.label}
+              </option>
+            ))}
+          </Select>
           <Controller
             control={control}
             name="accessLevel"
